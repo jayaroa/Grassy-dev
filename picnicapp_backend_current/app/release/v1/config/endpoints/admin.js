@@ -5,8 +5,6 @@ const checkAuth = require('../../middleware/check-auth');
 router.use(express.json());
 router.use(express.urlencoded({extended:true}))
 
-
-
 router.post('/get_city_admins', adminCtrl.getCityAdminList);
 router.post('/approve_city_admin', adminCtrl.approveCityAdmin);
 
@@ -32,8 +30,5 @@ router.post('/find_park_details', adminCtrl.getSingleParkDetails);
 router.post('/approve_park', adminCtrl.approvePark);
 router.post('/add_edit_park', adminCtrl.addEditPark);
 router.post('/remove_park', adminCtrl.removePark);
-
-
-
 
 module.exports = router;

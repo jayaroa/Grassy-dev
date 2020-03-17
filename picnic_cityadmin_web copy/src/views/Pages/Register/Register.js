@@ -78,6 +78,7 @@ class Register extends Component {
   };
 
   getCityList(searchTerm) {
+    
     axios
       .post(path + "admin/get_city_list/", { search_term: searchTerm })
       .then(serverResponse => {
@@ -269,7 +270,7 @@ class Register extends Component {
                           >
                             Sign Up
                           </Button>
-                        </Col>                                      
+                        </Col>
                       </Row>
                       <Row>
                           <Col xs="12" >
@@ -294,14 +295,14 @@ class Register extends Component {
                 >
                   <CardBody className="text-center">
                     <div style={{paddingTop : '130px'}}>
-                    <img src={logo} width="300px" />                     
-                    </div>                    
+                    <img src={logo} width="300px" />
+                    </div>
                   </CardBody>
                 </Card>
               </CardGroup>
             </Col>
           </Row>
-          {/* {this.state.isAuthenticated == false? 
+          {/* {this.state.isAuthenticated == false?
                     <Row>
                        <Col md="5"></Col>
                       <Col md="4">

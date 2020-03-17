@@ -14,7 +14,7 @@ module.exports = {
   //Get City admin list
   getCityAdminList : (req,res,next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
-    
+
     let aggrQry = [
       {
         $match : {
@@ -265,7 +265,7 @@ module.exports = {
     })
 
   },
-  
+
 ///////////////////////////////////////////////////////////////////////////////////
 
 
@@ -671,11 +671,11 @@ module.exports = {
       }
     });
   },
-    
+
     // Get all city list
   getCityState: (req,res,next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
-    
+
       var cityName = req.body.city_name ? req.body.city_name
           : res.json({
               isError: true,
@@ -683,7 +683,7 @@ module.exports = {
               details: null,
               message: errorMsgJSON[lang]["303"] + " - city_name "
             });
-            
+
             var cityZip = req.body.city_zip ? req.body.city_zip
           : res.json({
               isError: true,
@@ -691,7 +691,7 @@ module.exports = {
               details: null,
               message: errorMsgJSON[lang]["303"] + " - city_zip "
             });
-      
+
     let searchQry = [
       {
         $match: {
@@ -699,8 +699,8 @@ module.exports = {
             {
               zips : cityZip,
               cityName: { $regex: cityName, $options: "i" }
-            }           
-          ]          
+            }
+          ]
         }
       },
       {
@@ -737,7 +737,7 @@ module.exports = {
       }
     })
   },
-    
+
   // Get all city list
   getAllCities: (req,res,next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
@@ -752,8 +752,8 @@ module.exports = {
             {
               isRemoved : false,
               cityName: { $regex: searchTerm, $options: "i" }
-            }           
-          ]          
+            }
+          ]
         }
       },
       {
@@ -768,17 +768,18 @@ module.exports = {
       }
     ]
 
+    console.log('SEARCH QUERY')
+    console.log(searchQry)
 
     City.aggregate(searchQry).exec((err, response) => {
-      if(err){
+      if(err) {
         res.json({
           isError: true,
           message: errorMsgJSON[lang]["404"],
           statuscode: 400,
           details: null
         });
-      }
-      else{
+      } else {
         if(response){
           res.json({
             isError: false,
@@ -796,7 +797,7 @@ module.exports = {
 
   //ToDo :  Check boundary (wheather within City)
   addEditPark: (req, res, next) => {
-   
+
     let lang = req.headers.language ? req.headers.language : "EN";
     var operationType = req.body.operation_type
       ? req.body.operation_type
@@ -812,12 +813,12 @@ module.exports = {
     ? req.body.park_email
     : res.json({
         isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_email"
-      });   
+      });
     var parkMobile = req.body.park_mobile
     ? req.body.park_mobile
     : res.json({
         isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_mobile"
-      });    
+      });
     var parkAddress = req.body.park_address
       ? req.body.park_address
       : res.json({
@@ -1023,7 +1024,7 @@ module.exports = {
     var perPageItem = req.body.per_page_item ? req.body.per_page_item : 10;
 
     var itemToSkip = (pageNo - 1) * perPageItem;
-    
+
     // check wheather zip or name
     searchAggrQry =
       searchTerm == ""
@@ -1086,12 +1087,12 @@ module.exports = {
                  parkId: 1
               }
             },
-           
+
             {
               $group: {
                   "_id": {
                       "parkZipCode": "$parkZipCode",
-                    
+
                   },
                   "parkCity": {
                       $first: "$parkCity"
@@ -1102,7 +1103,7 @@ module.exports = {
                   "parkZipCode": {
                     $first: "$parkZipCode"
                   },
-                  
+
                 }
               },
               {
@@ -1111,16 +1112,16 @@ module.exports = {
                   "parkCity":1,
                   "parkName":1,
                   "parkZipCode":1
-                  
+
                 }
               },
-          
+
           ];
 
     Park.aggregate(searchAggrQry).exec((err, item) => {
-      
-     
-      
+
+
+
       if(err){
         res.json({
           isError: true,
@@ -1132,14 +1133,14 @@ module.exports = {
       }
       else{
         if(item.length==0){
-         
-            
+
+
             res.json({
               isError: false,
               message: errorMsgJSON[lang]["1076"],
               statuscode: 1076,
               details: []
-           
+
           })
         }
         else{
@@ -1148,9 +1149,9 @@ module.exports = {
               {
                 $match: {
                     'parkName': item[0].parkName,
-                    
+
                 },
-               
+
             },
             {
               $skip: itemToSkip
@@ -1167,16 +1168,16 @@ module.exports = {
                 details: item
               })
             })
-             
+
           }
          else if(searchTerm==item[0].parkZipCode){
             let agg=[
               {
                 $match: {
                     'parkCity': item[0].parkCity,
-                    
+
                 },
-               
+
             },
             {
               $skip: itemToSkip
@@ -1262,9 +1263,9 @@ module.exports = {
               {
                 $limit: perPageItem
               }
-             
-             
-            
+
+
+
             ];
             Park.aggregate(agg).exec((err, item) => {
               res.json({
@@ -1274,16 +1275,16 @@ module.exports = {
                 details: item
               })
             })
-           
+
           }
 
         }
-      
-      }
-       
 
-     
-     
+      }
+
+
+
+
     });
   },
 
@@ -1321,6 +1322,6 @@ module.exports = {
     // No of parks
     // No of cities/cityadmins
     // No of users
-    // 
+    //
   }
 };
