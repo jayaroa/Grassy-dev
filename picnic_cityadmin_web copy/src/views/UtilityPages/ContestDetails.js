@@ -13,9 +13,10 @@ import MomentLocaleUtils, {
 
 import * as AWS from "aws-sdk/global";
 import * as S3 from "aws-sdk/clients/s3";
+
 import GoogleMapReact from "google-map-react";
 import MapMarker from "../../assets/favicon.ico";
-
+import swal from 'sweetalert';
 import {
   // Badge,
   Button,
@@ -59,7 +60,7 @@ class AddEditComponent extends Component {
     super(props);
 
     this.state = {
-      contest_mode: "ADD", 
+      contest_mode: "ADD",
       sponsor_name: "",
       award_amount: "",
       start_date: new Date(),
@@ -75,7 +76,7 @@ class AddEditComponent extends Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-    
+
   onStartChange = start_date => this.setState({ start_date })
   onEndChange = end_date => this.setState({ end_date })
 
@@ -101,7 +102,7 @@ class AddEditComponent extends Component {
         if (!res.isError) {
             console.log("************************");
             this.setState({
-              park_mode: "EDIT", 
+              park_mode: "EDIT",
               sponsor_name: res["details"][0]["sponsorName"],
               award_amount: res["details"][0]["awardAmount"],
               start_date: res["details"][0]["startDate"],
@@ -113,7 +114,7 @@ class AddEditComponent extends Component {
               contest_details: res["details"][0]["contestDetails"],
               support_email: res["details"][0]["supportEmail"]
             });
-            
+
             let contestPicArr = [];
             contestPicArr.push(this.state.sponsor_logo);
             this.setState({ contest_pictures: contestPicArr });
@@ -154,7 +155,7 @@ class AddEditComponent extends Component {
 
   addEditContest(action_type) {
     // let dataToSend = { ...this.state };
-      
+
     let that = this;
     let dataToSend = {
       sponsor_name: that.state.sponsor_name,
@@ -189,6 +190,22 @@ class AddEditComponent extends Component {
           // history.push('/parklist')
         } else {
           alert(res.message);
+        }
+      });
+  }
+
+  /*Handle pro flag*/
+  handleproflag(e) {
+    e.preventDefault();
+      swal({
+        title: "Oops!",
+        text: "You dont have any active plan! Please Upgrade",
+        icon: "warning",
+        dangerMode: true,
+      })
+      .then(willupgrade => {
+        if (willupgrade) {
+          swal('', 'You will be redirected to upgrade page', 'success');
         }
       });
   }
@@ -315,6 +332,10 @@ class AddEditComponent extends Component {
       flex: "1"
     };
 
+    /*Get localstorage data*/
+    var proFlag =  localStorage.getItem('proFlag');
+    console.log('I am here', proFlag)
+
     return (
       <div className="animated fadeIn">
         <Row>
@@ -385,16 +406,21 @@ class AddEditComponent extends Component {
                             </Col>
                             <Col md="3">
                                 <br/><Label>Is Contest Enabled</Label><br/>
-                                <AppSwitch className={"mx-1"} variant={"pill"} color={"success"} 
+                                { proFlag = 0 ?
+                                  <AppSwitch className={"mx-1"} variant={"pill"} color={"success"}
                                 onChange={event => this.handleChange(event)}
                                 name="is_enabled"
                                 checked={this.state.is_enabled}
-                            // onClick={() =>
-                            //   this.toggleSwitchHandler(eachDetails.parkId)
-                            // }
-                          />
+                                /> : <div onClick={ this.handleproflag }><AppSwitch className={"mx-1"} variant={"pill"} color={"success"}
+                              onChange={event => this.handleChange(event)}
+                              name="is_enabled"
+                              checked={this.state.is_enabled}
+                              disabled="true"
+                              />
+                              </div>
+                              }
                             </Col>
-                            
+
                           </Row>
                             <Row style={mb20}>
                                     <Col md="10">
@@ -450,8 +476,8 @@ class AddEditComponent extends Component {
                         </FormGroup>
                       </Col>
                     </Row>
-                                  
-                    
+
+
                   </Col>
                 </Row>
                 <Row className="justify-content-end" style={borderTop}>

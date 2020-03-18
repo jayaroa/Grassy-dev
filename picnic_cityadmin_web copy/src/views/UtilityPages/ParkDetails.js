@@ -8,7 +8,7 @@ import * as AWS from "aws-sdk/global";
 import * as S3 from "aws-sdk/clients/s3";
 import GoogleMapReact from "google-map-react";
 import MapMarker from "../../assets/favicon.ico";
-
+import swal from 'sweetalert';
 import {
   // Badge,
   Button,
@@ -50,10 +50,8 @@ const bucket = new S3({
 class AddEditComponent extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       parkMode: "ADD",
-
       park_name: "",
       park_email: "",
       park_mobile: "",
@@ -70,7 +68,7 @@ class AddEditComponent extends Component {
       park_amenities: [],
       park_details: [],
       park_verified: false,
-      park_message: "",    
+      park_message: "",
       last_updated_by: "",
 
       pavilionModal: false,
@@ -132,7 +130,7 @@ class AddEditComponent extends Component {
               park_zip_code: res["details"]["parkZipCode"],
               park_acre: res["details"]["parkAcreage"],
               park_long: res["details"]["parkCoordinate"]["coordinates"][0],
-              park_lat: res["details"]["parkCoordinate"]["coordinates"][1],              
+              park_lat: res["details"]["parkCoordinate"]["coordinates"][1],
               // park_amenities: res["details"]["parkAmenities"],
               // park_details: res["details"]["parkDetails"],
               park_default_picture: res["details"]["parkDefaultPic"],
@@ -152,7 +150,7 @@ class AddEditComponent extends Component {
               park_zip_code: res["details"]["parkZipCode"],
               park_acre: res["details"]["parkAcreage"],
               park_long: res["details"]["parkCoordinate"]["coordinates"][0],
-              park_lat: res["details"]["parkCoordinate"]["coordinates"][1],              
+              park_lat: res["details"]["parkCoordinate"]["coordinates"][1],
               park_amenities: res["details"]["parkAmenities"],
               park_details: res["details"]["parkDetails"],
               park_default_picture: res["details"]["parkDefaultPic"],
@@ -556,6 +554,26 @@ class AddEditComponent extends Component {
     return awsPath;
   }
 
+  /*Handle pro flag*/
+  handleproflag(e) {
+    e.preventDefault();
+      swal({
+        title: "Oops!",
+        text: "You dont have any active plan! Please Upgrade",
+        icon: "warning",
+        dangerMode: true,
+      })
+      .then(willupgrade => {
+        if (willupgrade) {
+          swal('', 'You will be redirected to upgrade page', 'success');
+        }
+      });
+  }
+
+   showAlert() {
+        alert("CheckBox is Disabled");
+    }
+
   //////////////////////////////////////////////////////////////////////////
 
   render() {
@@ -637,6 +655,9 @@ class AddEditComponent extends Component {
       flex: "1"
     };
 
+    /*Get localstorage data*/
+    var proFlag =  localStorage.getItem('proFlag');
+    console.log('I am here', proFlag)
     return (
       <div className="animated fadeIn">
         <Row>
@@ -709,7 +730,7 @@ class AddEditComponent extends Component {
                                 value={this.state.park_city}
                                 placeholder="Enter your city"
                                 onChange={event => this.handleChange(event)}
-                                readonly="true"
+                                readOnly
                               />
                             </Col>
                             <Col md="3">
@@ -762,27 +783,41 @@ class AddEditComponent extends Component {
                           </Row>
                           <Row style={mb20}>
                             <Col md="3">
-                                <Label>Is City Verified (Pro)</Label><br/>
+                              <Label>Is City Verified (Pro)</Label><br/>
+                              { proFlag = 0 ?
                                 <AppSwitch className={"mx-1"} variant={"pill"} color={"success"} checked={this.state.park_verified}
-                                onChange={event => this.handleChange(event)}
+                                  onChange={event => this.handleChange(event)}
+                                  name="park_verified"
+                                />
+                                : <div onClick={ this.handleproflag }><AppSwitch className={"mx-1 ckDemo"} variant={"pill"} color={"success"}
+                                disabled
+                                onChange={this.handleproflag}
+                                 checked={this.state.park_verified}
                                 name="park_verified"
-                                //disabled={this.state.is_premium == false}
-                            // checked={eachDetails.isParkVerified}
-                            // onClick={() =>
-                            //   this.toggleSwitchHandler(eachDetails.parkId)
-                            // }
-                          />
-                        </Col>
+                                />
+                                </div>
+                              }
+                          </Col>
                         <Col md="3">
                               <Label htmlFor="parkMessage">Custom Alert Message (Pro)</Label>
-                              <Input
-                                type="text"
-                                name="park_message"
-                                value={this.state.park_message}
-                                placeholder="Enter alert message (optional)"
-                                onChange={event => this.handleChange(event)}
-                                //disabled={this.state.is_premium == false}
-                              />
+                              { proFlag = 0 ?
+                                  <Input
+                                    type="text"
+                                    name="park_message"
+                                    value={this.state.park_message}
+                                    placeholder="Enter alert message (optional)"
+                                    onChange={event => this.handleChange(event)}
+                                  />
+                                :  <div onClick={ this.handleproflag }><Input
+                                  type="text"
+                                  name="park_message"
+                                  value={this.state.park_message}
+                                  placeholder="Enter alert message (optional)"
+                                  onChange={event => this.handleChange(event)}
+                                  disabled="true"
+                                />
+                                </div>
+                              }
                             </Col>
                           </Row>
                         </FormGroup>

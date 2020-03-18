@@ -77,7 +77,14 @@ class Login extends Component {
         const res = serverResponse.data;
         if (!res.isError) {
           localStorage.setItem("picnic_cityadmin_cred", JSON.stringify(res['details']));
-          that.props.history.push("/dashboard");
+          /*code by sheeza*/
+          var responseResult    = res['details'];
+          if(responseResult.data != '') {
+              var proFlag = responseResult.data.proFlag;
+              localStorage.setItem("proFlag", proFlag);
+          }
+          /*code by sheeza end*/
+          that.props.history.push("/package");
         } else {
           this.setState({
             isAuthenticated: false,

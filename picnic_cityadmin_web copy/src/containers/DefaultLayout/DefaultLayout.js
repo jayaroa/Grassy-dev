@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import * as router from "react-router-dom";
 import { Container } from "reactstrap";
 import withAuthentication from "./../../Session/WithAuthentication";
-
+import swal from 'sweetalert';
 import {
   AppAside,
   AppFooter,
@@ -32,7 +32,14 @@ const logoutStyle={
 }
 
 class DefaultLayout extends Component {
-  state = {};
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isPaidUser:false
+    };
+  }
+
   loading = () => (
     <div className="animated fadeIn pt-1 text-center">Loading...</div>
   );
@@ -40,6 +47,7 @@ class DefaultLayout extends Component {
   signOut(e) {
     e.preventDefault();
     localStorage.removeItem("picnic_cityadmin_cred")
+    localStorage.removeItem("proFlag")
     this.props.history.push("/login");
   }
 
@@ -55,7 +63,24 @@ class DefaultLayout extends Component {
       this.props.history.push("/login");
     } else {
       this.setState({ storage });
+      var pro =  localStorage.getItem('proFlag');
+      this.setState({ isPaidUser: true });
     }
+  }
+
+  handleClick(e) {
+    e.preventDefault();
+      swal({
+        title: "Oops!",
+        text: "You dont have any active plan! Please Upgrade",
+        icon: "warning",
+        dangerMode: true,
+      })
+      .then(willupgrade => {
+        if (willupgrade) {
+          swal('', 'You will be redirected to upgrade page', 'success');
+        }
+      });
   }
 
   render() {
@@ -66,23 +91,23 @@ class DefaultLayout extends Component {
             <DefaultHeader onLogout={e => this.signOut(e)} />
           </Suspense>
         </AppHeader>
-        <div className="app-body">
+        <div className="app-body" >
+
           <AppSidebar fixed display="lg">
             <AppSidebarHeader />
             <AppSidebarForm />
             <Suspense>
-              <AppSidebarNav
-                navConfig={navigation}
-                {...this.props}
-                router={router}
-              />
+                <AppSidebarNav
+                  navConfig={navigation}
+                  {...this.props}
+                  router={router}
+                />
             </Suspense>
-            <AppSidebarFooter>
-              <a href="javascript:void(0)" className="nav-link" style={logoutStyle} onClick={e=>this.signOut(e)}>
-                <i className="fa fa-sign-out"> Logout </i>
-              </a>
-            </AppSidebarFooter>
-            {/* <AppSidebarMinimizer></AppSidebarMinimizer> */}
+              <AppSidebarFooter>
+                <a href="javascript:void(0)" className="nav-link" style={logoutStyle} onClick={e=>this.signOut(e)}>
+                  <i className="fa fa-sign-out"> Logout </i>
+                </a>
+              </AppSidebarFooter>
           </AppSidebar>
           <main className="main">
             <AppBreadcrumb appRoutes={routes} router={router} />

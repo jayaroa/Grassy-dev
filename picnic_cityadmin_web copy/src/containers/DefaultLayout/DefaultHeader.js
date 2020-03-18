@@ -23,7 +23,7 @@ class DefaultHeader extends Component {
 
     // eslint-disable-next-line
     const { children, ...attributes } = this.props;
-
+    let isPaid =  localStorage.getItem('proFlag');
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
@@ -32,7 +32,7 @@ class DefaultHeader extends Component {
           full={{ src: logo, width: 104, height: 52, alt: 'Grassy App' }}
           minimized={{ src: logo2, width: 104, height: 52, alt: 'Grassy App' }}
         />
-        <AppSidebarToggler className="d-md-down-none" display="lg" />       
+        <AppSidebarToggler className="d-md-down-none" display="lg" />
       </React.Fragment>
     );
   }
