@@ -14,9 +14,9 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String
     },
-    email : { 
-        type: String, 
-        lowercase: true, 
+    email : {
+        type: String,
+        lowercase: true,
         trim: true,
         match : [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,'Please fill valid email address'],
         validate: {
@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
                     })
               })
             }, message: 'Email Already Taken'
-          } 
+          }
     },
     mobile : String,
     password : {
@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     otp : {
-        type : Number        
+        type : Number
     },
     userType : {
         type : String,
@@ -65,9 +65,14 @@ const userSchema = new mongoose.Schema({
         enum : [true,false],
         default : false
     },
-    profileCreatedAt : { 
+    profileCreatedAt : {
         type: Date,
         default: Date.now
+    },
+    proFlag : {
+        type : Number,
+        enum : [0,1,2],
+        default : 0
     },
     userImage : String,
     cityName : String,
@@ -75,7 +80,7 @@ const userSchema = new mongoose.Schema({
 },
 {
     timestamps: true, // add created_at , updated_at at the time of insert/update
-    versionKey: false 
+    versionKey: false
 })
 
 userSchema.pre('save', async function (next) {
@@ -113,7 +118,7 @@ userSchema.methods.comparePassword = function (pw, cb) {
 // 2. model automatically add 's' after the name of the model name
 // 3. do not use 's' at the end of the model name
 // 4. if model is not present in the db when first time we add data to collection it will automatically create one.
-// 5. if any field does not match with its model field type throw an exception so write catch block 
+// 5. if any field does not match with its model field type throw an exception so write catch block
 const User = mongoose.model("User", userSchema)
 
 module.exports = User

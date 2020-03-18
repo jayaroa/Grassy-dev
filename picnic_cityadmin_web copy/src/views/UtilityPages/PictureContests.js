@@ -66,19 +66,19 @@ class Contests extends Component {
           const allContests = res.details;
           var count = 0;
             var newList = [];
-            
+
             for (let i = 0; i < allContests.length; i++) {
                 if (allContests[i].isEnabled == true) {
                     count++;
                 }
             }
-            
+
             for (let i = 0; i < allContests.length; i++) {
                 if (allContests[i].contestType == "PICTURE") {
                     newList.push(allContests[i]);
                 }
             }
-          
+
             this.setState({
                 active_count: count,
                 allContests: newList
@@ -131,6 +131,9 @@ class Contests extends Component {
     let availableOptions = {
       padding: "0px 8px"
     };
+    /*pro flag*/
+    var proFlag =  localStorage.getItem('proFlag');
+    console.log('I am here', proFlag)
 
     return (
       <div className="animated fadeIn">

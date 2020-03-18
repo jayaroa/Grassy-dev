@@ -14,8 +14,10 @@ const DefaultLayout = React.lazy(() => import("./containers/DefaultLayout"));
 
 // Pages
 const Login = React.lazy(() => import("./views/Pages/Login"));
+const Package = React.lazy(() => import("./views/Pages/Package"));
 const ForgotPass = React.lazy(() => import("./views/Pages/ForgotPass"));
 const Register = React.lazy(() => import("./views/Pages/Register"));
+const Payment = React.lazy(() => import("./views/Pages/Payment"));
 const Page404 = React.lazy(() => import("./views/Pages/Page404"));
 const Page500 = React.lazy(() => import("./views/Pages/Page500"));
 
@@ -24,14 +26,18 @@ class App extends Component {
     super(props);
 
     this.state = {
-      isAuthUser: false
+      isAuthUser: false,
+      isPaidUser:false,
     };
   }
 
   componentDidMount() {
+    var admincred = localStorage.getItem("picnic_cityadmin_cred");
     if (localStorage.getItem("picnic_cityadmin_cred")) {
-      console.log("inside if2");
-      this.setState(() => ({ isAuthUser: true }));
+      console.log("inside if2", admincred);
+      var pro =  localStorage.getItem('proFlag');
+      console.log('pro', pro);
+      this.setState(() => ({ isAuthUser: true, isPaidUser:true }));
     } else {
       console.log("inside else2");
       this.setState(() => ({ isAuthUser: false }));
@@ -39,7 +45,8 @@ class App extends Component {
   }
 
   render() {
-    const {isAuthUser} =this.state;
+    const {isAuthUser, isPaidUser} =this.state;
+    console.log('isPaidUser', isPaidUser);
     return (
       <BrowserRouter>
           <React.Suspense fallback={loading()}>
@@ -47,6 +54,8 @@ class App extends Component {
               <Route exact path="/login" name="Login Page" render={props => <Login {...props}/>} />
               <Route exact path="/forgotpass" name="Forgot Password" render={props => <ForgotPass {...props}/>} />
               <Route exact path="/register" name="Register Page" render={props => <Register {...props}/>} />
+              <Route exact path="/payment" name="Payment Page" render={props => <Payment {...props}/>} />
+              <Route exact path="/package" name="Package Page" render={props => <Package {...props}/>} />
               <Route exact path="/404" name="Page 404" render={props => <Page404 {...props}/>} />
               <Route exact path="/500" name="Page 500" render={props => <Page500 {...props}/>} />
               <Route  path="/" name="Home" render={props => <DefaultLayout {...props}/>} />

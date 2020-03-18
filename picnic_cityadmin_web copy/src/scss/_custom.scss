@@ -1,5 +1,85 @@
 // Here you can add other styles
+$prim:#22a8d8;
+$white:#fff;
+$dark:#333;
+.sidebar .sidebar-footer {
+    padding: 0;
+}
 
 .sidebar .sidebar-footer {
     padding: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.pack-wl {
+    border: 1px solid $prim;
+    .card {
+        padding: 0px !important;
+        overflow: hidden;
+        .card-ribbon {
+          width: 200px;
+          padding: 2px 5px;
+          position: absolute;
+          text-align: center;
+          font-size: 12px;
+          z-index: 1;
+          &.card-ribbon-top {
+            background: $prim;
+              top: 20px;
+              color: $white;
+              left: -70px;
+              -webkit-transform: rotate(-45deg);
+              -ms-transform: rotate(-45deg);
+              transform: rotate(-45deg);
+          }
+          &.card-ribbon-left {
+            background: #f7f7f7;
+            top: 20px;
+            color: dark;
+            right: -70px;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+          }
+        }
+        .card-title {
+          padding-top: 1rem!important;
+          padding-bottom: 1rem!important;
+          margin: 0;
+          font-size: 1.75rem;
+          font-weight: 600;
+          text-align: center;
+          .em {
+              display: block;
+          }
+        }
+        .card-body {
+          .list-border-dots {
+            padding: 0px 10px;
+            margin: 0;
+          }
+        }
+        .price-banner {
+          margin: 0;
+          padding: 11px 10px;
+          text-align: center;
+          text-shadow: none;
+          color: $white;
+          background: $prim;
+          display: block;
+          line-height: 1;
+          .price-digits {
+            font-size: 32px;
+            font-weight: 700;
+          }
+      }
+      .btn-primary {
+        width: 100%;
+        margin: 10px 0 0;
+        font-weight: 600;
+        font-size: 16px;
+        padding: 3px 0;
+      }
+    }
 }

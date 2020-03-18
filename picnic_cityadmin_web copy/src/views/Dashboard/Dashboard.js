@@ -1,5 +1,6 @@
 import React, { Component, lazy, Suspense } from "react";
 import { Bar, Line } from "react-chartjs-2";
+import swal from 'sweetalert';
 import {
   // Badge,
   // Button,
@@ -260,13 +261,36 @@ class Dashboard extends Component {
     <div className="animated fadeIn pt-1 text-center">Loading...</div>
   );
 
+  /*compoenent Did mount*/
+  componentDidMount() {
+    let pro = localStorage.getItem('proFlag');
+    if( pro == 0) {
+      swal({
+        title: "Oops! You dont have access to page",
+        text: "You dont have any active plan! Please Upgrade",
+        icon: "warning",
+        dangerMode: true,
+      })
+      .then(willupgrade => {
+        if (willupgrade) {
+          swal('', 'You will be redirected to upgrade page', 'success');
+          this.props.history.push("/parklist");
+        }
+      });
+    } else {
+      console.log(' a pro user');
+    }
+  }
+
+
   render() {
+
     return (
-      <div className="animated fadeIn">
+      <div className="animated fadeIn" >
         <Row>
           <Col xs="12" sm="6" lg="3">
             <Card className="text-white bg-info">
-              <CardBody className="pb-0">               
+              <CardBody className="pb-0">
                 <div className="text-value">XX</div>
                 <div>Cities</div>
               </CardBody>
@@ -282,7 +306,7 @@ class Dashboard extends Component {
 
           <Col xs="12" sm="6" lg="3">
             <Card className="text-white bg-primary">
-              <CardBody className="pb-0">                
+              <CardBody className="pb-0">
                 <div className="text-value">XX</div>
                 <div>Parks</div>
               </CardBody>
@@ -298,7 +322,7 @@ class Dashboard extends Component {
 
           <Col xs="12" sm="6" lg="3">
             <Card className="text-white bg-warning">
-              <CardBody className="pb-0">                
+              <CardBody className="pb-0">
                 <div className="text-value">XX</div>
                 <div>Members</div>
               </CardBody>
@@ -314,7 +338,7 @@ class Dashboard extends Component {
 
           <Col xs="12" sm="6" lg="3">
             <Card className="text-white bg-danger">
-              <CardBody className="pb-0">                
+              <CardBody className="pb-0">
                 <div className="text-value">XX</div>
                 <div>Checkins</div>
               </CardBody>

@@ -12,6 +12,7 @@ import {
   CardBody,
   CardGroup,
   CardFooter,
+  CardTitle,
   Col,
   Container,
   Form,
@@ -51,7 +52,7 @@ class Register extends Component {
       inputValue: ""
     };
 
-    // this.handleChange = this.handleChange.bind(this);
+    this.showPackage = this.showPackage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -78,7 +79,7 @@ class Register extends Component {
   };
 
   getCityList(searchTerm) {
-    
+
     axios
       .post(path + "admin/get_city_list/", { search_term: searchTerm })
       .then(serverResponse => {
@@ -112,6 +113,98 @@ class Register extends Component {
       this.getCityList(searchValue);
     }
   }
+
+  handleChangeInput(event) {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value
+    });
+  }
+
+
+  /*Show packages and save user details*/
+  showPackage(e) {
+    e.preventDefault();
+
+    let that = this;
+    if (
+      that.state.name == "" ||
+      that.state.email == "" ||
+      that.state.password == "" ||
+      that.state.mobile == "" ||
+      that.state.cityId == ""
+    ) {
+      alert("Please fill all the details");
+    } else {
+      let dataToSend = {
+        name: that.state.name,
+        email: that.state.email,
+        mobile: that.state.mobile,
+        password: that.state.password,
+        city_name: that.state.cityName.toUpperCase(),
+        city_id: that.state.cityId,
+        user_type: that.state.user_type
+      };
+
+      axios
+        .post(path + "/user/sign_up", dataToSend, {
+          headers: { "Content-Type": "application/json" }
+        })
+        .then(serverResponse => {
+          console.log("Response from here sdfvgdsfgsdfg: ", serverResponse);
+          const res = serverResponse.data;
+          if (!res.isError) {
+            alert("User Registered successfully");
+            that.props.history.push("/login");
+          } else {
+            that.setState({
+              isAuthenticated: false,
+              authMessage: res.details
+            });
+          }
+        });
+    }
+  }
+
+
+  getCityList(searchTerm) {
+
+    axios
+      .post(path + "admin/get_city_list/", { search_term: searchTerm })
+      .then(serverResponse => {
+        const res = serverResponse.data;
+        if (!res.isError) {
+          let listOfCities = res.details.map(city => {
+            return { value: city.cityId, label: city.cityDisplayName };
+          });
+          this.setState({
+            cityList: listOfCities
+          });
+        } else {
+          // this.setState({
+          //   isAuthenticated: false,
+          //   authMessage: "Wrong username or password"
+          // });
+        }
+      });
+  }
+
+  onSearchOptionSelect(val) {
+    this.setState({
+      cityId: val.value,
+      cityName: val.label
+    });
+  }
+
+  onSelectChange(event) {
+    const searchValue = event.target.value;
+    if (searchValue.length > 3) {
+      this.getCityList(searchValue);
+    }
+  }
+
 
   handleChangeInput(event) {
     const target = event.target;
@@ -175,8 +268,8 @@ class Register extends Component {
       <div className="app flex-row align-items-center">
         <Container>
           <Row className="justify-content-center">
-            <Col md="8">
-              <CardGroup>
+            <Col md="12">
+              <CardGroup className="step01">
                 <Card className="p-4">
                   <CardBody>
                     <div>
@@ -261,15 +354,13 @@ class Register extends Component {
                       </Row>
                       <Row>
                         <Col xs="12">
-                          <Button
-                            color="success"
-                            className="px-4"
-                            onClick={() => {
-                              this.handleSubmit();
-                            }}
-                          >
-                            Sign Up
-                          </Button>
+                        <Button
+                        onClick={this.showPackage}
+                          color="success"
+                          className="px-4"
+                        >
+                          Proceed to Next Step
+                        </Button>
                         </Col>
                       </Row>
                       <Row>
@@ -300,19 +391,9 @@ class Register extends Component {
                   </CardBody>
                 </Card>
               </CardGroup>
+
             </Col>
           </Row>
-          {/* {this.state.isAuthenticated == false?
-                    <Row>
-                       <Col md="5"></Col>
-                      <Col md="4">
-                        <Alert color="danger">
-                          {this.state.authMessage}
-                        </Alert>
-                      </Col>
-                    </Row>
-                         : null
-                        }         */}
         </Container>
       </div>
     );
