@@ -23,6 +23,7 @@ import {
 
 // var path = 'http://localhost:3132/v1/' + 'user/';
 var path = cred.API_PATH + "user/";
+
 const textLogoStyle = {
   fontSize: "31px",
   margin: "2px 15px",
@@ -178,14 +179,14 @@ class Login extends Component {
                   <CardBody className="text-center">
                     <div style={{"marginTop":'45px'}}>
                     <img src={logo} width="300px" />
-                      
+
                     </div>
                   </CardBody>
                 </Card>
               </CardGroup>
             </Col>
           </Row>
-          {/* {this.state.isAuthenticated == false? 
+          {/* {this.state.isAuthenticated == false?
                     <Row>
                        <Col md="5"></Col>
                       <Col md="4">

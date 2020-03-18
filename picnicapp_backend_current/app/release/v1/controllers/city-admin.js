@@ -10,12 +10,14 @@ const Field = require("../models/field");
 const Mailercontroller = require("../../../services/mailer");
 const errorMsgJSON = require("../../../services/errors.json");
 const AutogenerateIdcontroller = require('../../../services/AutogenerateId');
+var isodate = require("isodate");
+
 
 module.exports = {
 
     getParkReviews: (req, res, next) => {
       try {
-          let lang = req.headers.language ? req.headers.language : "EN";  
+          let lang = req.headers.language ? req.headers.language : "EN";
 
           // Here, we are receiving the Park Id
           let parkId = req.body.park_id ? req.body.park_id : res.json({
@@ -28,11 +30,11 @@ module.exports = {
 
           let aggrQuery = [
             {
-                $match: { 
+                $match: {
                   'parkId': parkId,
                 }
             }];
-          
+
           Review.aggregate(aggrQuery,function(err,response){
               if (err) {
                   res.json({
@@ -41,7 +43,7 @@ module.exports = {
                     statuscode: 404,
                     details: null
                   })
-                 
+
                   return;
               }
 
@@ -68,10 +70,10 @@ module.exports = {
 
                       return;
                   }
-                  
+
               }
-              
-          });  
+
+          });
 
       } catch (e) {
           res.send(e);
@@ -81,41 +83,53 @@ module.exports = {
 
     getParkReviewsForUser: (req, res, next) => {
       try {
-          let lang = req.headers.language ? req.headers.language : "EN";  
+          console.log(' I AM HERE');
+          let lang = req.headers.language ? req.headers.language : "EN";
 
           // Here, we are receiving the Park Id
           let parkCity = req.body.park_city ? req.body.park_city : res.json({
             isError: true,
             message: errorMsgJSON[lang]["303"] + " - park_city",
           });
-          
+
           let userId = req.body.user_id ? req.body.user_id : res.json({
             isError: true,
             message: errorMsgJSON[lang]["303"] + " - user_id",
           });
 
+          /*Code changed by Sheeza*/
           // Need to add this date range into the query TODO
-//          let startDate = req.body.start_date ? req.body.start_date : res.json({
-//            isError: true,
-//            message: errorMsgJSON[lang]["303"] + " - start_date",
-//          });
-//          
-//          let endDate = req.body.end_date ? req.body.end_date : res.json({
-//            isError: true,
-//            message: errorMsgJSON[lang]["303"] + " - end_date",
-//          });
+           let startDate = req.body.start_date ? req.body.start_date : res.json({
+             isError: true,
+             message: errorMsgJSON[lang]["303"] + " - start_date",
+           });
 
-          // Here, Circular json avoided
-//          if (!req.body.park_id) { return; }
-//
+           let endDate = req.body.end_date ? req.body.end_date : res.json({
+             isError: true,
+             message: errorMsgJSON[lang]["303"] + " - end_date",
+           });
+           //Uncomment to test the variable
+           // console.log('start date', new Date(startDate).toISOString());
+           // console.log('end date',  new Date(endDate).toISOString());
+           // console.log('start date', startDate);
+           // console.log('end date',  endDate);
+            // Here, Circular json avoided
+            //if (!req.body.park_id) { return; }
+
+
+          /*Query changed by Sheeza*/
           let aggrQuery = [
             {
-                $match: { 
+                $match: {
                   'cityState': parkCity,
-                  'userId': userId
+                  'userId': userId,
+                  'createdAt': {
+                    $gte: isodate(new Date(startDate).toISOString()),
+                    $lte: isodate(new Date(endDate).toISOString())
+                  }
                 }
             }];
-          
+
 //          Review.count({date: {
 //                $gte: startDate,
 //                $lt: endDate
@@ -133,7 +147,7 @@ module.exports = {
                     statuscode: 404,
                     details: null
                   })
-                 
+
                   return;
               }
 
@@ -160,12 +174,13 @@ module.exports = {
 
                       return;
                   }
-                  
+
               }
-              
-          });  
+
+          });
 
       } catch (e) {
+          console.log('i am here in error', e);
           res.send(e);
       }
 
@@ -173,19 +188,19 @@ module.exports = {
 
     // This function is used to add the review for a particular park
     addReviewForPark: (req, res, next) => {
-       
+
       try {
-          let lang = req.headers.language ? req.headers.language : "EN";  
+          let lang = req.headers.language ? req.headers.language : "EN";
 
           // Here, we are receiving the Park Id
           let parkId = req.body.park_id ? req.body.park_id : res.json({
             isError: true,
             message: errorMsgJSON[lang]["303"] + " - Park Id",
           });
-          
+
           // Here, we are receiving the Reviewer name
           let reviewerName = req.body.reviewer_name ? req.body.reviewer_name : "Anonymous";
-          
+
           // Here, we are receiving the User Id
           let userId = req.body.user_id ? req.body.user_id : res.json({
             isError: true,
@@ -200,42 +215,42 @@ module.exports = {
 
           // Here, we are receiving the review of the park
           let message = req.body.review_text ? req.body.review_text : "N/A";
-          
+
           // Here, we are receiving the cars of the park
           let cars = req.body.cars ? req.body.cars : res.json({
             isError: true,
             message: errorMsgJSON[lang]["303"] + " - Cars",
           });
-          
+
           // Here, we are receiving the people of the park
           let people = req.body.people ? req.body.people : res.json({
             isError: true,
             message: errorMsgJSON[lang]["303"] + " - People",
           });
-          
+
           // Here, we are receiving the city_state of the park
           let cityState = req.body.city_state ? req.body.city_state : res.json({
             isError: true,
             message: errorMsgJSON[lang]["303"] + " - city_state",
           });
-          
+
           // Here, we are receiving the city_state of the park
           let newParkRating = req.body.new_park_rating ? req.body.new_park_rating : res.json({
             isError: true,
             message: errorMsgJSON[lang]["303"] + " - new_park_rating",
           });
-          
+
           // Here, we are receiving the city_state of the park
           let newParkReviewCount = req.body.new_park_review_count ? req.body.new_park_review_count : res.json({
             isError: true,
             message: errorMsgJSON[lang]["303"] + " - new_park_review_count",
           });
-          
+
           let parkReviewId = AutogenerateIdcontroller.autogenerateId('PARKREV');
-          
+
           // Here, Circular json avoided
           if (!req.body.park_id || !req.body.user_id || !req.body.rating_value) { return; }
-          
+
           var newReview = new Review({
                       "reviewId":parkReviewId,
                       "parkId":parkId,
@@ -247,7 +262,7 @@ module.exports = {
                       "reviewerName":reviewerName,
                       "cityState": cityState
           });
-          
+
         newReview.save(function(err, item) {
             if (err) {
             res.json({
@@ -292,7 +307,7 @@ module.exports = {
       }
 
 
-   }, 
+   },
 
    //Find park via city and search via name or zip code search
 
@@ -311,7 +326,7 @@ module.exports = {
     var perPageItem = req.body.per_page_item ? req.body.per_page_item : 20;
 
     var itemToSkip = (pageNo - 1) * perPageItem;
-    
+
     // check wheather zip or name
     searchAggrQry = (searchTerm == "")?[
       {
@@ -353,7 +368,7 @@ module.exports = {
                 }
               ]
             }
-          ]          
+          ]
         }
       },
       {
@@ -391,7 +406,7 @@ module.exports = {
       }
     });
   },
-    
+
   //Find contests via city and search via name or zip code search
 
    findReviewsByCity: (req, res, next) => {
@@ -401,13 +416,13 @@ module.exports = {
       : res.json({
           isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "  : Please provide city_state"
         });
-    
+
        var searchAggrQry = [
-              { 
-                  $match: 
-                      { 
+              {
+                  $match:
+                      {
                           'cityState': cityState.toUpperCase()
-                      } 
+                      }
               },
           ]
 
@@ -429,7 +444,7 @@ module.exports = {
       }
     });
   },
-    
+
     //Find contests via city and search via name or zip code search
 
    findContestsByCity: (req, res, next) => {
@@ -439,28 +454,28 @@ module.exports = {
       : res.json({
           isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "  : Please provide city_state"
         });
-       
+
     var activeOnly = req.body.active_only
       ? req.body.active_only
       : false;
-    
+
        var searchAggrQry = [
-              { 
-                  $match: 
-                      { 
+              {
+                  $match:
+                      {
                           'parkCity': cityState.toUpperCase()
-                      } 
+                      }
               },
           ]
-       
+
        if (activeOnly) {
            searchAggrQry = [
-              { 
-                  $match: 
-                      { 
+              {
+                  $match:
+                      {
                           'parkCity': cityState.toUpperCase(),
                           'isEnabled': activeOnly
-                      } 
+                      }
               },
           ]
        }
@@ -476,21 +491,21 @@ module.exports = {
       } else {
           // Get the activeCount
           var count = 0;
-            
+
             for (let i = 0; i < item.length; i++) {
                 if (item[i].isEnabled == true) {
                     count++;
                 }
             }
-          
+
             var querywith = {
               parkCity: cityState
             };
-          
+
             var updatewith = {
               activeContestCount: count
             };
-          
+
           // Update parks by cityState with new value
           Park.updateMany(querywith, updatewith, function(err34, res1) {
               res.json({
@@ -503,7 +518,7 @@ module.exports = {
       }
     });
   },
-    
+
   //Find contests via city and search via name or zip code search
 
    findContestByID: (req, res, next) => {
@@ -513,13 +528,13 @@ module.exports = {
       : res.json({
           isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "  : Please provide city_state"
         });
-    
+
        let searchAggrQry = [
-              { 
-                  $match: 
-                      { 
+              {
+                  $match:
+                      {
                           'contestId': contestId
-                      } 
+                      }
               },
           ]
 
@@ -691,11 +706,11 @@ module.exports = {
           message: errorMsgJSON[lang]["303"] + " : Please provide last_updated_by"
         });
     var parkId = req.body.park_id ? req.body.park_id : "";
-      
-    var isParkVerified = req.body.park_verified 
-        ? req.body.park_verified 
+
+    var isParkVerified = req.body.park_verified
+        ? req.body.park_verified
         : false;
-      
+
     var parkMessage = req.body.park_message ? req.body.park_message : ""
 
     let parkLocation = {
@@ -802,7 +817,7 @@ module.exports = {
       res.send(e);
     }
   },
-    
+
     // Add or Edit contest
   addEditContest: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
@@ -820,7 +835,7 @@ module.exports = {
       // endDate
       // isEnabled
       // sponsorLogo
-      
+
     var sponsorName = req.body.sponsor_name
       ? req.body.sponsor_name
       : res.json({
@@ -874,7 +889,7 @@ module.exports = {
           details: null,
           message: errorMsgJSON[lang]["303"] + " : Please provide park_city"
         });
-      
+
     var mysteryPicture = req.body.mystery_picture
       ? req.body.mystery_picture
       : res.json({
@@ -883,7 +898,7 @@ module.exports = {
           details: null,
           message: errorMsgJSON[lang]["303"] + " : Please provide mystery_picture"
         });
-      
+
     var contestType = req.body.contest_type
       ? req.body.contest_type
       : res.json({
@@ -892,7 +907,7 @@ module.exports = {
           details: null,
           message: errorMsgJSON[lang]["303"] + " : Please provide contest_type"
         });
-      
+
     var contestDetails = req.body.contest_details
       ? req.body.contest_details
       : res.json({
@@ -901,7 +916,7 @@ module.exports = {
           details: null,
           message: errorMsgJSON[lang]["303"] + " : Please provide contest_details"
         });
-      
+
     var supportEmail = req.body.support_email
       ? req.body.support_email
       : res.json({
@@ -921,7 +936,7 @@ module.exports = {
           details: null,
           message: errorMsgJSON[lang]["303"] + " : Please provide contest_id"
         });
-          
+
         var querywith = {
           contestId: contestId
         };

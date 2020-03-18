@@ -17,7 +17,7 @@
     module.exports = {
       /** ******************************* AUTH-RELATED FEATURES start__******************************** */
 
-      // This api used to make a park un favourit for particular user 
+      // This api used to make a park un favourit for particular user
       // made by Ankur on 14-01-20
       makeUnfovouritePark: (req, res, next) => {
           let lang = req.headers.language ? req.headers.language : "EN";
@@ -44,18 +44,18 @@
               if (!req.body.parkId || !req.body.userId) { return; }
 
 
-              //======= 
+              //=======
 
               let aggrQuery = [
-                  { 
-                      $match: 
-                          { 
+                  {
+                      $match:
+                          {
                               'parkId': parkId,
-                          } 
+                          }
                   },
               ]
 
-              Park.aggregate(aggrQuery, 
+              Park.aggregate(aggrQuery,
                   function(err, response) {
                     if (err) {
                         res.json({
@@ -81,17 +81,17 @@
 
 
 
-              // ========== User.aggregate(aggrQuery, 
+              // ========== User.aggregate(aggrQuery,
                     let aggQuery = [
-                        { 
-                            $match: 
-                                { 
+                        {
+                            $match:
+                                {
                                     'userId': userId,
-                                } 
+                                }
                         },
                     ]
 
-                    User.aggregate(aggQuery, 
+                    User.aggregate(aggQuery,
                         function(err, user) {
 
                           if (err) {
@@ -122,13 +122,13 @@
               //  =========== Park.updateOne(updateWhere,
 
                                 let updateWhere = {
-                                      'parkId':parkId,                
+                                      'parkId':parkId,
                                  }
 
                                 Park.updateOne(updateWhere,
-                                  {  
+                                  {
                                       $pull: {"favouriteUser" : userId}
-                                  }, 
+                                  },
                                     function (updatederror, updatedresponse) {
 
                                         if (updatederror) {
@@ -139,7 +139,7 @@
                                               details: e
                                             });
 
-                                            return; 
+                                            return;
                                         } else {
 
                                             if (updatedresponse.nModified == 1) {
@@ -158,13 +158,13 @@
                                                   details: e
                                                 });
                                             }
-                                        }         
-                                  }) // End Park.updateOne(updateWhere, 
-                                  //========================== 
-                  //  =========== Park.updateOne(updateWhere, 
-              })  // =========== User.aggregate(aggrQuery, 
+                                        }
+                                  }) // End Park.updateOne(updateWhere,
+                                  //==========================
+                  //  =========== Park.updateOne(updateWhere,
+              })  // =========== User.aggregate(aggrQuery,
 
-          }) //=========== Park.aggregate(aggrQuery,    
+          }) //=========== Park.aggregate(aggrQuery,
 
 
           } catch (e) {
@@ -174,12 +174,12 @@
             statuscode: 400,
             details: e
           });
-        }  
+        }
 
-      },  
+      },
 
 
-      // This api used to fetch favourit park for particular user 
+      // This api used to fetch favourit park for particular user
       // made by Ankur on 14-01-20
       fetchFovouriteParkforUser: async (req, res, next) => {
 
@@ -203,16 +203,16 @@
                         message: errorMsgJSON[lang]["303"] + " userId"
                       });
 
-                if (!req.body.userId || !req.body.zips) { return; }    
+                if (!req.body.userId || !req.body.zips) { return; }
 
                 let agg ;
 
                 agg = [
 
-                      { "$match": { 
+                      { "$match": {
                           "parkZipCode": { "$in": zips },
-                         } 
-                      }, 
+                         }
+                      },
 
                       {
                         $project: {
@@ -273,10 +273,10 @@
                                       "parkExist": false,
                                     });
                                 }
-                            }         
-                          });       
-                      }) // END return new Promise(function(resolve, reject){   
-                  } // start of fetchPark 
+                            }
+                          });
+                      }) // END return new Promise(function(resolve, reject){
+                  } // start of fetchPark
 
                   let fetchParkStatus = await fetchPark(agg);
 
@@ -289,7 +289,7 @@
                       });
 
                       return;
-                  } 
+                  }
 
                   if (fetchParkStatus.parkExist == false) {
                       res.json({
@@ -316,9 +316,9 @@
                           ParkList[i].isfavourite = true;
                       } else {
                           ParkList[i].isfavourite = false;
-                      }  
+                      }
 
-                      delete ParkList[i].favouriteUser;   
+                      delete ParkList[i].favouriteUser;
                   }
 
                   res.json({
@@ -329,7 +329,7 @@
                       totalPark: totalPark,
                       noofpage: noofpage,
                       ParkList: ParkList
-                    }  
+                    }
                   });
 
           } catch (e) {
@@ -339,13 +339,13 @@
             statuscode: 400,
             details: e
           });
-        }  
+        }
 
-      },  
+      },
 
 
 
-      // This api used to make a park favourit for particular user 
+      // This api used to make a park favourit for particular user
       // made by Ankur on 14-01-20
       makeFovouritePark: (req, res, next) => {
           let lang = req.headers.language ? req.headers.language : "EN";
@@ -375,18 +375,18 @@
 
               if (!req.body.parkId || !req.body.userId) { return; }
 
-              //======= 
+              //=======
 
               let aggrQuery = [
-                  { 
-                      $match: 
-                          { 
+                  {
+                      $match:
+                          {
                               'parkId': parkId,
-                          } 
+                          }
                   },
               ]
 
-              Park.aggregate(aggrQuery, 
+              Park.aggregate(aggrQuery,
                   function(err, response) {
                     if (err) {
                         res.json({
@@ -412,28 +412,28 @@
 
 
 
-              // ========== User.aggregate(aggrQuery, 
+              // ========== User.aggregate(aggrQuery,
                     var aggQuery = [
-                        { 
-                            $match: 
-                                { 
+                        {
+                            $match:
+                                {
                                     'userId': userId,
-                                } 
+                                }
                         },
                     ]
-                    
+
                     if (usedAppleAuth == true) {
                         aggQuery = [
-                        { 
-                            $match: 
-                                { 
+                        {
+                            $match:
+                                {
                                     'aUserId': userId,
-                                } 
+                                }
                         },
                     ]
                     }
 
-                    User.aggregate(aggQuery, 
+                    User.aggregate(aggQuery,
                         function(err, user) {
 
                           if (err) {
@@ -461,13 +461,13 @@
 
                           //  =========== Park.updateOne(updateWhere,
                           let updateWhere = {
-                                'parkId':parkId,                
+                                'parkId':parkId,
                            }
 
                           Park.updateOne(updateWhere,
-                            {  
+                            {
                                 $addToSet: {"favouriteUser" : userId}
-                            }, 
+                            },
                               function (updatederror, updatedresponse) {
 
                                   if (updatederror) {
@@ -478,7 +478,7 @@
                                         details: e
                                       });
 
-                                      return; 
+                                      return;
                                   } else {
 
                                       if (updatedresponse.nModified == 1) {
@@ -497,12 +497,12 @@
                                             details: e
                                           });
                                       }
-                                  }         
+                                  }
                             }) // End Park.updateOne(updateWhere,
-                            //  =========== Park.updateOne(updateWhere, 
-                      })  // =========== User.aggregate(aggrQuery, 
+                            //  =========== Park.updateOne(updateWhere,
+                      })  // =========== User.aggregate(aggrQuery,
 
-                  }) //=========== Park.aggregate(aggrQuery,           
+                  }) //=========== Park.aggregate(aggrQuery,
 
 
           } catch (e) {
@@ -512,9 +512,9 @@
             statuscode: 400,
             details: e
           });
-        }  
+        }
 
-      },  
+      },
 
       /**
        * @description :  // common sign-up process for any type of user (SUPER-ADMIN, CITY-ADMIN, USER)
@@ -546,10 +546,10 @@
           var appleAuth = req.body.usedAppleAuth
           ? req.body.usedAppleAuth
           : false;
-          
+
           var password = "fakePassword";
           var aUserId = "";
-          
+
           if (appleAuth == false) {
               password = req.body.password
           ? req.body.password
@@ -569,7 +569,7 @@
               message: errorMsgJSON[lang]["303"] + " aUserId"
             });
           }
-          
+
         var userType = req.body.user_type
           ? req.body.user_type
           : res.json({
@@ -581,9 +581,9 @@
 
         var cityName = "";
         var cityId = "";
-          
+
           // Try sign in first if using appleAuth
-          
+
         if (appleAuth == true) {
               var findUserQry = {
                     aUserId: aUserId
@@ -631,7 +631,7 @@
               cityName: cityName,
               cityId: cityId
             });
-              
+
               if (aUserId != "") {
                   newUser = new User({
               name: name,
@@ -643,7 +643,7 @@
               aUserId: aUserId
             });
               }
-            
+
 
             newUser.save(function(err, item) {
               if (item) {
@@ -727,7 +727,7 @@
         }
                   }
                 });
-                        
+
           } else {
               // Do everything else
                       if (userType != "USER") {
@@ -763,7 +763,7 @@
               cityName: cityName,
               cityId: cityId
             });
-              
+
               if (aUserId != "") {
                   newUser = new User({
               name: name,
@@ -776,7 +776,7 @@
               aUserId: aUserId
             });
               }
-            
+
 
             newUser.save(function(err, item) {
               if (item) {
@@ -861,7 +861,7 @@
         }
           }
 
-        
+
       },
 
       /**
@@ -872,7 +872,7 @@
           var appleAuth = req.body.usedAppleAuth
           ? req.body.usedAppleAuth
           : false;
-          
+
         var email = req.body.email
           ? req.body.email
           : res.json({
@@ -881,9 +881,9 @@
               details: null,
               message: errorMsgJSON[lang]["303"] + "Please provide email"
             });
-          
+
           var password = "";
-          
+
           if (appleAuth == false) {
               password = req.body.password
           ? req.body.password
@@ -898,7 +898,7 @@
         var findUserQry = {
           email: email
         };
-          
+
           if (appleAuth == true) {
               findUserQry = {
                   aUserId: email
@@ -1226,8 +1226,8 @@
     // var perPageItem = req.body.per_page_item ? req.body.per_page_item : 10;
     // var itemToSkip = (pageNo - 1) * perPageItem;
 
-          
-          
+
+
       parkListProjectQry = [
         {
           $match: {
@@ -1250,11 +1250,11 @@
           }
         }
       ]
-      
-          
-          
+
+
+
           Park.aggregate(parkListProjectQry).exec((err, item) => {
-              
+
               if (err) {
                   res.json({
                     isError: true,
@@ -1324,7 +1324,7 @@
           });
         }
       },
-        
+
       //============================================================================
       // this api is written to fetch the list of cities for mobile application
       getCityListForMobApp: (req, res, next) => {
@@ -1422,10 +1422,10 @@
               //     parkCity: searchTerm
               //   }
               // },
-              { "$match": { 
+              { "$match": {
                 "parkZipCode": { "$in": zips },
 
-            } }, 
+            } },
 
               {
                 $group: {
@@ -1627,7 +1627,7 @@
               //               }, then: "$$ROOT" },
               //             { case: {$ne: [
               //               "$parkName", searchTerm
-              //             ]}, then: 
+              //             ]}, then:
               //               "$parkCity"
               //              }
               //          ],
@@ -2227,7 +2227,7 @@
               message: errorMsgJSON[lang]["303"] + "Please provide park_id"
             });
 
-        if (!req.body.park_id) { return; }  
+        if (!req.body.park_id) { return; }
 
         var findParkById = {
           parkId: parkId
@@ -2245,21 +2245,21 @@
               let cityState = parkdetails[0]["parkCity"];
 
               var reviewQ = [
-                  { 
-                      $match: 
-                          { 
+                  {
+                      $match:
+                          {
                               'parkId': parkId
-                          } 
+                          }
                   },
               ]
-              
+
               var contestQ = [
-                      { 
-                          $match: 
-                              { 
+                      {
+                          $match:
+                              {
                                   'parkCity': cityState,
                                   'isEnabled': true
-                              } 
+                              }
                       },
                     ]
 
