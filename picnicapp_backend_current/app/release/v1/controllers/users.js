@@ -91,20 +91,20 @@
                             });
                           } else {
                             /*subscription email */
-                            var subscriptionemail = {
-                              receiver: email,
-                              subject: "Subscription Update",
-                              message: "Hi, You have successfully subscribed to trygrassy.com, Your active Plan " + plan
-                            };
-                            Mailercontroller.viaGmail(subscriptionemail, (err, data) => {
-                              if (err) {
-                                res.json({
-                                  isError: true,
-                                  message: errorMsgJSON[lang]["400"],
-                                  statuscode: 430,
-                                  details: null
-                                });
-                              } else {
+                            // var subscriptionemail = {
+                            //   receiver: email,
+                            //   subject: "Subscription Update",
+                            //   message: "Hi, You have successfully subscribed to trygrassy.com, Your active Plan " + plan
+                            // };
+                            // Mailercontroller.viaGmail(subscriptionemail, (err, data) => {
+                            //   if (err) {
+                            //     res.json({
+                            //       isError: true,
+                            //       message: errorMsgJSON[lang]["400"],
+                            //       statuscode: 430,
+                            //       details: null
+                            //     });
+                            //   } else {
                                 /*If custome and charge is created successfully*/
                                 let query = { email: email };
                                 /*Update values*/
@@ -135,8 +135,8 @@
                                     });
                                   }
                                 });
-                              }
-                            });
+                            //  }
+                            //});
 
 
                           }
