@@ -12,6 +12,14 @@ $dark:#333;
     bottom: 0;
     width: 100%;
 }
+.modal {
+      background: #19191957;
+}
+.label-control {
+    width: 100%;
+    display: block;
+    text-align: left;
+}
 .pack-wl {
     border: 1px solid $prim;
     .card {

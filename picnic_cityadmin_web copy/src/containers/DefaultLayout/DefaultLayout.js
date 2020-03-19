@@ -64,7 +64,11 @@ class DefaultLayout extends Component {
     } else {
       this.setState({ storage });
       var pro =  localStorage.getItem('proFlag');
-      this.setState({ isPaidUser: true });
+      if(pro == 2) {
+        this.props.history.push("/package");
+      } else {
+          this.setState({ isPaidUser: true });
+      }
     }
   }
 

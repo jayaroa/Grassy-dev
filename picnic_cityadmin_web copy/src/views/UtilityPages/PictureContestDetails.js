@@ -92,6 +92,7 @@ class AddEditComponent extends Component {
       .then(willupgrade => {
         if (willupgrade) {
           swal('', 'You will be redirected to upgrade page', 'success');
+            window.location.href = "/package";
         }
       });
   }
@@ -425,7 +426,7 @@ class AddEditComponent extends Component {
                             </Col>
                             <Col md="3">
                                 <br/><Label>Is Contest Enabled</Label><br/>
-                                { proFlag = 0 ?
+                                { proFlag != '0' ?
                                     <AppSwitch className={"mx-1"} variant={"pill"} color={"success"}
                                     onChange={event => this.handleChange(event)}
                                     name="is_enabled"

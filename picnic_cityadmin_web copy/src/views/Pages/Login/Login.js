@@ -46,10 +46,48 @@ class Login extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  calculatedate(profilecreatedate) {
+    let previous_date = new Date(profilecreatedate);
+    var prev_date_format = previous_date.getFullYear()+'-' + (previous_date.getMonth()+1) + '-'+previous_date.getDate()
+    var currentdate = (new Date()).toISOString().split('T')[0];
+    const diffTime = Math.abs(new Date(currentdate) - new Date(prev_date_format));
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  }
+
   async componentDidMount() {
     let storage = await localStorage.getItem("picnic_cityadmin_cred");
     if (storage) {
-      this.props.history.push("/");
+      let that = this;
+      var responseResult = JSON.parse(storage);
+      /*code by sheeza*/
+      if(responseResult.data != '') {
+          var proFlag = responseResult.data.proFlag;
+          /*conditional check for free trial days*/
+          var profilecreatedate = responseResult.data.profileCreatedAt;
+          var diffDays = that.calculatedate(profilecreatedate);
+
+          if(diffDays != '') {
+            if( proFlag == 0) {
+              if(diffDays < cred.FREETRIAL) {
+                localStorage.setItem("proFlag", proFlag);
+                that.props.history.push("/package");
+              } else {
+                alert('Your Free trial is exceeded');
+                localStorage.setItem("proFlag", 2);
+                that.props.history.push("/package");
+              }
+            } else {
+              localStorage.setItem("proFlag", proFlag);
+              that.props.history.push("/dashboard");
+            }
+          } else {
+            this.setState({
+              isAuthenticated: false,
+              authMessage: "Error in getting the date Please try after some time"
+            });
+          }
+      }
     }
   }
 
@@ -62,6 +100,8 @@ class Login extends Component {
     });
   }
 
+
+
   handleSubmit() {
     let that = this;
     let dataToSend = {
@@ -73,18 +113,43 @@ class Login extends Component {
         headers: { "Content-Type": "application/json" }
       })
       .then(serverResponse => {
-        console.log("Response from here : ", serverResponse);
         const res = serverResponse.data;
         if (!res.isError) {
           localStorage.setItem("picnic_cityadmin_cred", JSON.stringify(res['details']));
           /*code by sheeza*/
-          var responseResult    = res['details'];
+          var responseResult = res['details'];
           if(responseResult.data != '') {
               var proFlag = responseResult.data.proFlag;
-              localStorage.setItem("proFlag", proFlag);
+              /*conditional check for free trial days*/
+              var profilecreatedate = responseResult.data.profileCreatedAt;
+              var diffDays = this.calculatedate(profilecreatedate);
+              if(diffDays != '') {
+                if( proFlag == 0) {
+                  if(diffDays < cred.FREETRIAL) {
+                    localStorage.setItem("proFlag", proFlag);
+                    that.props.history.push("/package");
+                  } else {
+                    alert('Your Free trial is exceeded');
+                    localStorage.setItem("proFlag", 2);
+                    that.props.history.push("/package");
+                  }
+                } else {
+                  localStorage.setItem("proFlag", proFlag);
+                  that.props.history.push("/dashboard");
+                }
+              } else {
+                this.setState({
+                  isAuthenticated: false,
+                  authMessage: "Error in getting the date Please try after some time"
+                });
+              }
+          } else {
+            this.setState({
+              isAuthenticated: false,
+              authMessage: "Error in authenticating user Please try after some time"
+            });
           }
           /*code by sheeza end*/
-          that.props.history.push("/package");
         } else {
           this.setState({
             isAuthenticated: false,

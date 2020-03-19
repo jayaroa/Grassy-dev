@@ -74,6 +74,14 @@ const userSchema = new mongoose.Schema({
         enum : [0,1,2],
         default : 0
     },
+    freetrialdays:{
+      type : String,
+      default : 10
+    },
+    customerId:{
+      type:String,
+      default: null
+    },
     userImage : String,
     cityName : String,
     cityId : String,

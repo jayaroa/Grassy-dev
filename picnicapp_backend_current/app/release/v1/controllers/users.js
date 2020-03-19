@@ -14,8 +14,161 @@
     const Mailercontroller = require("../../../services/mailer");
     const errorMsgJSON = require("../../../services/errors.json");
     const config = require("../config/globals/keyfile");
+
+    const stripe = require('stripe')('sk_test_NrRvjLO9RVjGTwqpRN6t9S1200KEc5mHDl');
+
+
     module.exports = {
       /** ******************************* AUTH-RELATED FEATURES start__******************************** */
+
+      create_payment:(req, res, next) => {
+        let lang = req.headers.language ? req.headers.language : "EN";
+        try {
+            let token = req.body.token
+            ? req.body.token
+            : res.json({
+                isError: true,
+                statuscode: 303,
+                details: null,
+                message: errorMsgJSON[lang]["303"] + " token"
+              });
+
+            let plan = req.body.plan
+            ? req.body.plan
+            : res.json({
+                isError: true,
+                statuscode: 303,
+                details: null,
+                message: errorMsgJSON[lang]["303"] + "plan"
+              });
+
+            let userId = req.body.userId
+              ? req.body.userId
+              : res.json({
+                  isError: true,
+                  statuscode: 303,
+                  details: null,
+                  message: errorMsgJSON[lang]["303"] + "userId"
+                });
+
+            let email = req.body.email
+              ? req.body.email
+              : res.json({
+                  isError: true,
+                  statuscode: 303,
+                  details: null,
+                  message: errorMsgJSON[lang]["303"] + "email"
+                });
+
+            if(userId != '' && token != '') {
+              let pricing = 0;
+              /*set pricing value*/
+              if(plan == 'pro-m') {
+                pricing = 300;
+              } else {
+                pricing = 200;
+              }
+              /*Creating customers usings tripe*/
+              stripe.customers.create({
+                  email: email,
+                  source: token.id
+                }).then(function (customer) {
+                  /*If customer created succesfully*/
+                  if(customer) {
+                    /*Once user is created creating a charge for him*/
+                    console.log('pricing', pricing);
+                    stripe.subscriptions.create({
+                        customer: customer.id,
+                        items: [{plan: plan}],
+                      },
+                        function(err, charge) {
+                          if(err) {
+                            res.json({
+                              isError: true,
+                              message: errorMsgJSON[lang]["400"],
+                              statuscode: 400,
+                              details: null
+                            });
+                          } else {
+                            /*subscription email */
+                            var subscriptionemail = {
+                              receiver: email,
+                              subject: "Subscription Update",
+                              message: "Hi, You have successfully subscribed to trygrassy.com, Your active Plan " + plan
+                            };
+                            Mailercontroller.viaGmail(subscriptionemail, (err, data) => {
+                              if (err) {
+                                res.json({
+                                  isError: true,
+                                  message: errorMsgJSON[lang]["400"],
+                                  statuscode: 430,
+                                  details: null
+                                });
+                              } else {
+                                /*If custome and charge is created successfully*/
+                                let query = { email: email };
+                                /*Update values*/
+                                var updatevalueswith = {
+                                  $set: {
+                                    proFlag: 1,
+                                    customerId:customer.id
+                                  }
+                                };
+                                /*Update user query*/
+                                User.updateOne(query, updatevalueswith, function(err, res1) {
+                                  if (err) {
+                                    res.json({
+                                      isError: true,
+                                      message: errorMsgJSON[lang]["400"],
+                                      statuscode: 400,
+                                      details: null
+                                    });
+                                  }
+                                  if (res1.nModified > 0) {
+                                    res.json({
+                                      isError: false,
+                                      message:
+                                        errorMsgJSON[lang]["200"] +
+                                        "Payment was successfull",
+                                      statuscode: 200,
+                                      details: null
+                                    });
+                                  }
+                                });
+                              }
+                            });
+
+
+                          }
+                        }
+                      );
+                  } else {
+                    res.json({
+                      isError: true,
+                      message: errorMsgJSON[lang]["400"],
+                      statuscode: 400,
+                      details: null
+                    });
+                  }
+              });
+            } else {
+              res.json({
+                isError: true,
+                message: errorMsgJSON[lang]["400"],
+                statuscode: 400,
+                details: null
+              });
+            }
+          } catch (e) {
+            res.json({
+              isError: true,
+              message: errorMsgJSON[lang]["404"],
+              statuscode: 400,
+              details: e
+            });
+        }
+
+      },
 
       // This api used to make a park un favourit for particular user
       // made by Ankur on 14-01-20

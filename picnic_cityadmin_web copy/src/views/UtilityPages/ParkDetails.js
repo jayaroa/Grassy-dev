@@ -566,6 +566,7 @@ class AddEditComponent extends Component {
       .then(willupgrade => {
         if (willupgrade) {
           swal('', 'You will be redirected to upgrade page', 'success');
+          window.location.href = "/package";
         }
       });
   }
@@ -658,6 +659,7 @@ class AddEditComponent extends Component {
     /*Get localstorage data*/
     var proFlag =  localStorage.getItem('proFlag');
     console.log('I am here', proFlag)
+
     return (
       <div className="animated fadeIn">
         <Row>
@@ -784,7 +786,7 @@ class AddEditComponent extends Component {
                           <Row style={mb20}>
                             <Col md="3">
                               <Label>Is City Verified (Pro)</Label><br/>
-                              { proFlag = 0 ?
+                              { proFlag != '0' ?
                                 <AppSwitch className={"mx-1"} variant={"pill"} color={"success"} checked={this.state.park_verified}
                                   onChange={event => this.handleChange(event)}
                                   name="park_verified"
@@ -800,7 +802,7 @@ class AddEditComponent extends Component {
                           </Col>
                         <Col md="3">
                               <Label htmlFor="parkMessage">Custom Alert Message (Pro)</Label>
-                              { proFlag = 0 ?
+                              { proFlag != '0' ?
                                   <Input
                                     type="text"
                                     name="park_message"

@@ -8,12 +8,13 @@ const Contests = React.lazy(() => import('./views/UtilityPages/Contests'));
 const PictureContests = React.lazy(() => import('./views/UtilityPages/PictureContests'));
 const ParkDetails = React.lazy(() => import('./views/UtilityPages/ParkDetails'));
 const ContestDetails = React.lazy(() => import('./views/UtilityPages/ContestDetails'));
+const Package = React.lazy(() => import("./views/Pages/Package"));
 const PictureContestDetails = React.lazy(() => import('./views/UtilityPages/PictureContestDetails'));
 
 
 
 const routes = [
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard },  
+  { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/profile', exact:true, name: 'Profile', component: Profile},
   { path: '/pushmessage', exact:true, name: 'Push Message', component: PushMessage},
   { path: '/parklist', exact:true, name: 'Park List', component: ParkList},
