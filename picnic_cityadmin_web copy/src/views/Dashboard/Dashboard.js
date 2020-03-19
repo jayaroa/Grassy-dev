@@ -264,21 +264,28 @@ class Dashboard extends Component {
   /*compoenent Did mount*/
   componentDidMount() {
     let pro = localStorage.getItem('proFlag');
-    if( pro == 0) {
-      swal({
-        title: "Oops! You dont have access to page",
-        text: "You dont have any active plan! Please Upgrade",
-        icon: "warning",
-        dangerMode: true,
-      })
-      .then(willupgrade => {
-        if (willupgrade) {
-          swal('', 'You will be redirected to upgrade page', 'success');
-          this.props.history.push("/parklist");
-        }
-      });
+    if(pro == 'undefined' || pro == undefined || pro == null  || pro == 'null' ) {
+      alert('Error in getting logged variable');
+      this.props.history.push("/login");
     } else {
-      console.log(' a pro user');
+      if( pro == 0) {
+        swal({
+          title: "Oops! You dont have access to page",
+          text: "You dont have any active plan! Please Upgrade",
+          icon: "warning",
+          dangerMode: true,
+        })
+        .then(willupgrade => {
+          if (willupgrade) {
+            swal('', 'You will be redirected to Parklist', 'success');
+            this.props.history.push("/parklist");
+          }
+        });
+      } else if(pro == 2) {
+        this.props.history.push("/package");
+      } else {
+        console.log(' a pro user');
+      }
     }
   }
 

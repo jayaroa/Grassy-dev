@@ -39,9 +39,24 @@ class City extends Component {
 
   // loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
+
   componentDidMount() {
-    this.getCityList();
+    let pro = localStorage.getItem('proFlag');
+    if(pro == 'undefined' || pro == undefined || pro == null  || pro == 'null' ) {
+      alert('Error in getting logged variable');
+      this.props.history.push("/login");
+    } else {
+      if( pro == 0) {
+        this.getCityList();
+      } else if(pro == 2) {
+        this.props.history.push("/package");
+      } else {
+        console.log(' a pro user');
+        this.getCityList();
+      }
+    }
   }
+
 
   // --------------------- Handler code starts here ------------------------------//
 

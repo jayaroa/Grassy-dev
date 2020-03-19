@@ -359,7 +359,7 @@ class Register extends Component {
                           color="success"
                           className="px-4"
                         >
-                          Proceed to Next Step
+                          Register
                         </Button>
                         </Col>
                       </Row>

@@ -42,6 +42,8 @@ router.post('/fetch-fovourite-park-for-user', userCtrl.fetchFovouriteParkforUser
 
 router.post('/give_review', userCtrl.giveParkReview);
 
+/*Payment routes*/
+router.post('/create_payment', userCtrl.create_payment);
 
 
 
