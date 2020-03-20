@@ -90,11 +90,15 @@ class Package extends Component {
           title: "Free Trial!",
           text: "You will be given free trial for 10 days!",
           icon: "warning",
+          buttons: {
+            cancel: "Close",
+            Proceed: true
+          },
           dangerMode: true,
         })
         .then(willupgrade => {
           if (willupgrade) {
-            this.props.history.push("/dashboard");
+            this.props.history.push("/parklist");
           }
         });
       }
