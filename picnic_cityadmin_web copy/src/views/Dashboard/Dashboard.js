@@ -269,14 +269,22 @@ class Dashboard extends Component {
       this.props.history.push("/login");
     } else {
       if( pro == 0) {
+
         swal({
           title: "Oops! You dont have access to page",
           text: "You dont have any active plan! Please Upgrade",
           icon: "warning",
+          buttons: {
+            cancel: "Close",
+            Upgrade: true
+          },
           dangerMode: true,
         })
         .then(willupgrade => {
           if (willupgrade) {
+            swal('', 'You will be redirected to Payment', 'success');
+            this.props.history.push("/package");
+          } else {
             swal('', 'You will be redirected to Parklist', 'success');
             this.props.history.push("/parklist");
           }
@@ -289,9 +297,7 @@ class Dashboard extends Component {
     }
   }
 
-
   render() {
-
     return (
       <div className="animated fadeIn" >
         <Row>

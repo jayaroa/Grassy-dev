@@ -88,6 +88,10 @@ class AddEditComponent extends Component {
         text: "You dont have any active plan! Please Upgrade",
         icon: "warning",
         dangerMode: true,
+        buttons: {
+          cancel: "Close",
+          Upgrade: true
+        },
       })
       .then(willupgrade => {
         if (willupgrade) {
