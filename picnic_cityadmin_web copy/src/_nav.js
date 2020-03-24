@@ -3,7 +3,7 @@ export default {
     {
       name: 'Dashboard',
       url: '/dashboard',
-      icon: 'icon-speedometer',     
+      icon: 'icon-speedometer',
     },
     // {
     //   name: 'Profile',
@@ -13,23 +13,23 @@ export default {
     {
       name: 'Park List',
       url: '/parklist',
-      icon : 'icon-list'
+      icon: 'icon-list'
     },
     {
       name: 'Check-in Contests',
       url: '/contests',
-      icon : 'icon-people'
+      icon: 'icon-people'
     },
     {
       name: 'Picture Contests',
       url: '/pictureContests',
-      icon : 'icon-people'
+      icon: 'icon-people'
     },
-//     {
-//       name: 'Message',
-//       url: '/pushmessage',
-//       icon : 'icon-envelope'
-//     },
-   
+    {
+      name: 'Message',
+      url: '/pushmessage',
+      icon: 'icon-envelope'
+    },
+
   ],
 };

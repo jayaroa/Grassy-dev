@@ -8,24 +8,25 @@ const Paviliondetails = require("../models/paviliondetails");
 const imageUpload = require("../../../services/ImageUploadBase64");
 const Mailercontroller = require("../../../services/mailer");
 const errorMsgJSON = require("../../../services/errors.json");
+const notificationService = require('../../../services/FirebaseOps')
 
 module.exports = {
 
   //Get City admin list
-  getCityAdminList : (req,res,next) => {
+  getCityAdminList: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
 
     let aggrQry = [
       {
-        $match : {
-          userType : 'CITY-MANAGER'
+        $match: {
+          userType: 'CITY-MANAGER'
         }
       },
       {
-        $project :{
-          "_id":0,
-          "userId":1,
-          "userType":1,
+        $project: {
+          "_id": 0,
+          "userId": 1,
+          "userType": 1,
           "isActive": 1,
           "isApproved": 1,
           "isLoggedIn": 1,
@@ -37,8 +38,8 @@ module.exports = {
       }
     ]
 
-    User.aggregate(aggrQry,function(err,response){
-      if(err){
+    User.aggregate(aggrQry, function (err, response) {
+      if (err) {
         res.json({
           isError: true,
           message: errorMsgJSON[lang]["404"],
@@ -46,8 +47,8 @@ module.exports = {
           details: null
         });
       }
-      else{
-        if(response){
+      else {
+        if (response) {
           res.json({
             isError: false,
             message: errorMsgJSON[lang]["200"],
@@ -65,12 +66,12 @@ module.exports = {
     var cityAdminId = req.body.city_admin_id
       ? req.body.city_admin_id
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide city_admin_id"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide city_admin_id"
+      });
 
     let serachOption = { userId: cityAdminId };
 
-    User.findOne(serachOption, function(err, item) {
+    User.findOne(serachOption, function (err, item) {
       if (err) {
         res.json({
           isError: true,
@@ -81,14 +82,14 @@ module.exports = {
       } else {
         if (item) {
           // console.log(item)
-          let approvalType = item.isApproved?false:true
+          let approvalType = item.isApproved ? false : true
           let updateFieldsWith = {
             $set: {
               isApproved: approvalType
             }
           };
 
-          User.updateOne(serachOption, updateFieldsWith, function(err, res1) {
+          User.updateOne(serachOption, updateFieldsWith, function (err, res1) {
             if (err) {
               res.json({
                 isError: true,
@@ -127,13 +128,13 @@ module.exports = {
     var operationType = req.body.operation_type
       ? req.body.operation_type
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
+      });
     var amenityName = req.body.amenity_name
       ? req.body.amenity_name
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide amenity_name"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide amenity_name"
+      });
     var amenityId = req.body.amenity_id ? req.body.amenity_id : "";
 
     if (operationType.toUpperCase() == "EDIT") {
@@ -143,7 +144,7 @@ module.exports = {
       var updatewith = {
         amenityName: amenityName
       };
-      Amenity.updateOne(querywith, updatewith, function(err, res1) {
+      Amenity.updateOne(querywith, updatewith, function (err, res1) {
         if (err) {
           res.json({
             isError: true,
@@ -174,7 +175,7 @@ module.exports = {
         amenityName: amenityName
       });
 
-      newAmenity.save(function(err, item) {
+      newAmenity.save(function (err, item) {
         if (item) {
           res.json({
             isError: false,
@@ -196,21 +197,21 @@ module.exports = {
   },
 
   // remove / soft delete Amenity
-  removeAmenity: (req,res,next) => {
+  removeAmenity: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     var amenityId = req.body.amenity_id ? req.body.amenity_id : res.json({
-      isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide amenity_id"
+      isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide amenity_id"
     });
 
-    let querywith ={
+    let querywith = {
       amenityId: amenityId
     }
 
-    let updatewith={
-      "isRemoved":true
+    let updatewith = {
+      "isRemoved": true
     }
 
-    Amenity.updateOne(querywith, updatewith, function(err, res1) {
+    Amenity.updateOne(querywith, updatewith, function (err, res1) {
       if (err) {
         res.json({
           isError: true,
@@ -240,11 +241,11 @@ module.exports = {
   },
 
   // Get all amenity list
-  getAllAmenity : (req,res,next) => {
+  getAllAmenity: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
 
-    Amenity.find({"isRemoved":false},function(err,response){
-      if(err){
+    Amenity.find({ "isRemoved": false }, function (err, response) {
+      if (err) {
         res.json({
           isError: true,
           message: errorMsgJSON[lang]["404"],
@@ -252,8 +253,8 @@ module.exports = {
           details: null
         });
       }
-      else{
-        if(response){
+      else {
+        if (response) {
           res.json({
             isError: false,
             message: errorMsgJSON[lang]["200"],
@@ -266,7 +267,7 @@ module.exports = {
 
   },
 
-///////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////
 
 
   // Add or Edit global details list
@@ -275,13 +276,13 @@ module.exports = {
     var operationType = req.body.operation_type
       ? req.body.operation_type
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
+      });
     var detailsName = req.body.gdetails_name
       ? req.body.gdetails_name
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide details_name"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide details_name"
+      });
     var gdetailsId = req.body.gdetails_id ? req.body.gdetails_id : "";
 
     if (operationType.toUpperCase() == "EDIT") {
@@ -291,7 +292,7 @@ module.exports = {
       var updatewith = {
         gdetailsName: detailsName
       };
-      Globaldetails.updateOne(querywith, updatewith, function(err, res1) {
+      Globaldetails.updateOne(querywith, updatewith, function (err, res1) {
         if (err) {
           res.json({
             isError: true,
@@ -322,7 +323,7 @@ module.exports = {
         gdetailsName: detailsName
       });
 
-      newDetails.save(function(err, item) {
+      newDetails.save(function (err, item) {
         if (item) {
           res.json({
             isError: false,
@@ -343,21 +344,21 @@ module.exports = {
     }
   },
 
-  removeDetails : (req,res,next) => {
+  removeDetails: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     var detailsId = req.body.gdetails_id ? req.body.gdetails_id : res.json({
-      isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide details_id"
+      isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide details_id"
     });
 
-    let querywith ={
+    let querywith = {
       gdetailsId: detailsId
     }
 
-    let updatewith={
-      "isRemoved":true
+    let updatewith = {
+      "isRemoved": true
     }
 
-    Globaldetails.updateOne(querywith, updatewith, function(err, res1) {
+    Globaldetails.updateOne(querywith, updatewith, function (err, res1) {
       if (err) {
         res.json({
           isError: true,
@@ -386,10 +387,10 @@ module.exports = {
   },
 
   // Get all global details list
-  getAllGlobalDetails : (req,res,next) => {
+  getAllGlobalDetails: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
-    Globaldetails.find({"isRemoved":false},function(err,response){
-      if(err){
+    Globaldetails.find({ "isRemoved": false }, function (err, response) {
+      if (err) {
         res.json({
           isError: true,
           message: errorMsgJSON[lang]["404"],
@@ -397,8 +398,8 @@ module.exports = {
           details: null
         });
       }
-      else{
-        if(response){
+      else {
+        if (response) {
           res.json({
             isError: false,
             message: errorMsgJSON[lang]["200"],
@@ -410,7 +411,7 @@ module.exports = {
     })
   },
 
-////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////
 
   // Add or Edit pavilion details list
   addEditPavilionDetails: (req, res, next) => {
@@ -418,13 +419,13 @@ module.exports = {
     var operationType = req.body.operation_type
       ? req.body.operation_type
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
+      });
     var pdetailsName = req.body.pdetails_name
       ? req.body.pdetails_name
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide pdetails_name"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide pdetails_name"
+      });
     var pdetailsId = req.body.pdetails_id ? req.body.pdetails_id : "";
 
     if (operationType.toUpperCase() == "EDIT") {
@@ -434,7 +435,7 @@ module.exports = {
       var updatewith = {
         pdetailsName: pdetailsName
       };
-      Paviliondetails.updateOne(querywith, updatewith, function(err, res1) {
+      Paviliondetails.updateOne(querywith, updatewith, function (err, res1) {
         if (err) {
           res.json({
             isError: true,
@@ -465,7 +466,7 @@ module.exports = {
         pdetailsName: pdetailsName
       });
 
-      newDetails.save(function(err, item) {
+      newDetails.save(function (err, item) {
         if (item) {
           res.json({
             isError: false,
@@ -486,21 +487,21 @@ module.exports = {
     }
   },
 
-  removePavilionDetails : (req,res,next) => {
+  removePavilionDetails: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     var pdetailsId = req.body.pdetails_id ? req.body.pdetails_id : res.json({
-      isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide pavilion_details_id"
+      isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide pavilion_details_id"
     });
 
-    let querywith ={
+    let querywith = {
       pdetailsId: pdetailsId
     }
 
-    let updatewith={
-      "isRemoved":true
+    let updatewith = {
+      "isRemoved": true
     }
 
-    Paviliondetails.updateOne(querywith, updatewith, function(err, res1) {
+    Paviliondetails.updateOne(querywith, updatewith, function (err, res1) {
       if (err) {
         res.json({
           isError: true,
@@ -529,10 +530,10 @@ module.exports = {
   },
 
   // Get all pavilion details list
-  getAllPavilionDetails : (req,res,next) => {
+  getAllPavilionDetails: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
-    Paviliondetails.find({"isRemoved":false},function(err,response){
-      if(err){
+    Paviliondetails.find({ "isRemoved": false }, function (err, response) {
+      if (err) {
         res.json({
           isError: true,
           message: errorMsgJSON[lang]["404"],
@@ -540,8 +541,8 @@ module.exports = {
           details: null
         });
       }
-      else{
-        if(response){
+      else {
+        if (response) {
           res.json({
             isError: false,
             message: errorMsgJSON[lang]["200"],
@@ -554,7 +555,7 @@ module.exports = {
   },
 
 
-////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////
 
   // Add or Edit city list
   addEditCity: (req, res, next) => {
@@ -562,13 +563,13 @@ module.exports = {
     var operationType = req.body.operation_type
       ? req.body.operation_type
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
+      });
     var cityName = req.body.city_name
       ? req.body.city_name
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide city_name"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide city_name"
+      });
     var cityId = req.body.city_id ? req.body.city_id : "";
 
     if (operationType.toUpperCase() == "EDIT") {
@@ -578,7 +579,7 @@ module.exports = {
       var updatewith = {
         cityName: cityName
       };
-      City.updateOne(querywith, updatewith, function(err, res1) {
+      City.updateOne(querywith, updatewith, function (err, res1) {
         if (err) {
           res.json({
             isError: true,
@@ -609,7 +610,7 @@ module.exports = {
         cityName: cityName
       });
 
-      newCity.save(function(err, item) {
+      newCity.save(function (err, item) {
         if (item) {
           res.json({
             isError: false,
@@ -630,21 +631,21 @@ module.exports = {
     }
   },
 
-  removeCity : (req,res,next) => {
+  removeCity: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     var cityId = req.body.city_id ? req.body.city_id : res.json({
-      isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide city_id"
+      isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide city_id"
     });
 
-    let querywith ={
-       cityId: cityId
+    let querywith = {
+      cityId: cityId
     }
 
-    let updatewith={
-      "isRemoved":true
+    let updatewith = {
+      "isRemoved": true
     }
 
-    City.updateOne(querywith, updatewith, function(err, res1) {
+    City.updateOne(querywith, updatewith, function (err, res1) {
       if (err) {
         res.json({
           isError: true,
@@ -672,52 +673,52 @@ module.exports = {
     });
   },
 
-    // Get all city list
-  getCityState: (req,res,next) => {
+  // Get all city list
+  getCityState: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
 
-      var cityName = req.body.city_name ? req.body.city_name
-          : res.json({
-              isError: true,
-              statuscode: 303,
-              details: null,
-              message: errorMsgJSON[lang]["303"] + " - city_name "
-            });
+    var cityName = req.body.city_name ? req.body.city_name
+      : res.json({
+        isError: true,
+        statuscode: 303,
+        details: null,
+        message: errorMsgJSON[lang]["303"] + " - city_name "
+      });
 
-            var cityZip = req.body.city_zip ? req.body.city_zip
-          : res.json({
-              isError: true,
-              statuscode: 303,
-              details: null,
-              message: errorMsgJSON[lang]["303"] + " - city_zip "
-            });
+    var cityZip = req.body.city_zip ? req.body.city_zip
+      : res.json({
+        isError: true,
+        statuscode: 303,
+        details: null,
+        message: errorMsgJSON[lang]["303"] + " - city_zip "
+      });
 
     let searchQry = [
       {
         $match: {
-          $and : [
+          $and: [
             {
-              zips : cityZip,
+              zips: cityZip,
               cityName: { $regex: cityName, $options: "i" }
             }
           ]
         }
       },
       {
-        $project : {
-          _id : 0,
-          cityName:1,
-          cityDisplayName:1,
-          cityId:1,
-          state:1,
-          zips:1
+        $project: {
+          _id: 0,
+          cityName: 1,
+          cityDisplayName: 1,
+          cityId: 1,
+          state: 1,
+          zips: 1
         }
       }
     ]
 
 
     City.aggregate(searchQry).exec((err, response) => {
-      if(err){
+      if (err) {
         res.json({
           isError: true,
           message: errorMsgJSON[lang]["404"],
@@ -725,8 +726,8 @@ module.exports = {
           details: null
         });
       }
-      else{
-        if(response){
+      else {
+        if (response) {
           res.json({
             isError: false,
             message: errorMsgJSON[lang]["200"],
@@ -739,31 +740,31 @@ module.exports = {
   },
 
   // Get all city list
-  getAllCities: (req,res,next) => {
+  getAllCities: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     var searchTerm = req.body.search_term ? req.body.search_term : res.json({
-      isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide search_term"
+      isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide search_term"
     });
 
     let searchQry = [
       {
         $match: {
-          $and : [
+          $and: [
             {
-              isRemoved : false,
+              isRemoved: false,
               cityName: { $regex: searchTerm, $options: "i" }
             }
           ]
         }
       },
       {
-        $project : {
-          _id : 0,
-          cityName:1,
-          cityDisplayName:1,
-          cityId:1,
-          state:1,
-          zips:1
+        $project: {
+          _id: 0,
+          cityName: 1,
+          cityDisplayName: 1,
+          cityId: 1,
+          state: 1,
+          zips: 1
         }
       }
     ]
@@ -772,7 +773,7 @@ module.exports = {
     console.log(searchQry)
 
     City.aggregate(searchQry).exec((err, response) => {
-      if(err) {
+      if (err) {
         res.json({
           isError: true,
           message: errorMsgJSON[lang]["404"],
@@ -780,7 +781,7 @@ module.exports = {
           details: null
         });
       } else {
-        if(response){
+        if (response) {
           res.json({
             isError: false,
             message: errorMsgJSON[lang]["200"],
@@ -793,7 +794,7 @@ module.exports = {
   },
 
 
-////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////
 
   //ToDo :  Check boundary (wheather within City)
   addEditPark: (req, res, next) => {
@@ -802,63 +803,63 @@ module.exports = {
     var operationType = req.body.operation_type
       ? req.body.operation_type
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide operation_type"
+      });
     var parkName = req.body.park_name
       ? req.body.park_name
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_name"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_name"
+      });
     var parkEmail = req.body.park_email
-    ? req.body.park_email
-    : res.json({
-        isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_email"
+      ? req.body.park_email
+      : res.json({
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_email"
       });
     var parkMobile = req.body.park_mobile
-    ? req.body.park_mobile
-    : res.json({
-        isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_mobile"
+      ? req.body.park_mobile
+      : res.json({
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_mobile"
       });
     var parkAddress = req.body.park_address
       ? req.body.park_address
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_address"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_address"
+      });
     var parkZipCode = req.body.park_zip_code
       ? req.body.park_zip_code
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_zip_code"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_zip_code"
+      });
     var parkCity = req.body.park_city
       ? req.body.park_city
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_city"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_city"
+      });
     var parkLat = req.body.park_lat
       ? req.body.park_lat
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_lat"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_lat"
+      });
     var parkLong = req.body.park_long
       ? req.body.park_long
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_long"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_long"
+      });
     var parkAmenities = req.body.park_amenities
       ? req.body.park_amenities
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_amenities"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_amenities"
+      });
     var parkDetails = req.body.park_details
       ? req.body.park_details
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide park_details"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide park_details"
+      });
     var lastUpdatedBy = req.body.last_updated_by
       ? req.body.last_updated_by
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + "Please provide last_updated_by"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + "Please provide last_updated_by"
+      });
     var parkId = req.body.park_id ? req.body.park_id : "";
 
     let parkLocation = {
@@ -885,7 +886,7 @@ module.exports = {
           editedBy: lastUpdatedBy // $push or $set
         }
       };
-      Park.updateOne(querywith, updatewith, function(err, res1) {
+      Park.updateOne(querywith, updatewith, function (err, res1) {
         console.log(err)
         if (err) {
           res.json({
@@ -927,7 +928,7 @@ module.exports = {
         lastUpdatedBy: lastUpdatedBy
       });
 
-      newPark.save(function(err, item) {
+      newPark.save(function (err, item) {
         if (item) {
           res.json({
             isError: false,
@@ -949,22 +950,22 @@ module.exports = {
   },
 
 
-  removePark : (req,res,next) => {
+  removePark: (req, res, next) => {
 
   },
 
 
-  approvePark : (req,res,next) => {
+  approvePark: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     var parkId = req.body.park_id
       ? req.body.park_id
       : res.json({
-          isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + " Please provide park_id"
-        });
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + " Please provide park_id"
+      });
 
     let serachOption = { parkId: parkId };
 
-    Park.findOne(serachOption, function(err, item) {
+    Park.findOne(serachOption, function (err, item) {
       if (err) {
         res.json({
           isError: true,
@@ -974,16 +975,16 @@ module.exports = {
         });
       } else {
         if (item) {
-          let approvalType = item.isParkVerified?false:true
+          let approvalType = item.isParkVerified ? false : true
           let updateFieldsWith = {
             $set: {
               isParkVerified: approvalType
             }
           };
 
-          Park.updateOne(serachOption, updateFieldsWith, function(err, res1) {
+          Park.updateOne(serachOption, updateFieldsWith, function (err, res1) {
             if (err) {
-              console.log("bhsdjodshjhjgfdjdsgsdgmnksdfbsdfkjj",err);
+              console.log("bhsdjodshjhjgfdjdsgsdgmnksdfbsdfkjj", err);
               res.json({
                 isError: true,
                 message: "Some error occured while updating.",
@@ -1029,100 +1030,100 @@ module.exports = {
     searchAggrQry =
       searchTerm == ""
         ? [
-            {
-              $match: {
-                isRemoved: false
-              }
-            },
-            {
-              $skip: itemToSkip
-            },
-            {
-              $limit: perPageItem
+          {
+            $match: {
+              isRemoved: false
             }
-          ]
+          },
+          {
+            $skip: itemToSkip
+          },
+          {
+            $limit: perPageItem
+          }
+        ]
         : [
-            {
-              $match: {
-                $and: [
-                  {
-                    isRemoved: false
-                  },
-                  {
-                    $or: [
-                      {
-                        parkName: { $regex: searchTerm, $options: "g" }
-                      },
-                      {
-                        parkZipCode: { $regex: searchTerm, $options: "g" }
-                      }
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              $project: {
-                _id: 0,
-                parkRating: 1,
-                isParkVerified: 1,
-                isRemoved: 1,
-                parkDefaultPic: 1,
-                parkPictures: 1,
-                parkLatestReviews: 1,
-                parkAmenities: 1,
-                parkDetails: 1,
-                pavilions: 1,
-                fields: 1,
-                editedBy: 1,
-                parkName: 1,
-                urbanId: 1,
-                parkZipCode: 1,
-               parkType: 1,
-                parkCity: 1,
-                parkCoordinate: 1,
-                parkAcreage: 1,
-                createdAt: 1,
-                updatedAt: 1,
-                 parkId: 1
-              }
-            },
-
-            {
-              $group: {
-                  "_id": {
-                      "parkZipCode": "$parkZipCode",
-
-                  },
-                  "parkCity": {
-                      $first: "$parkCity"
-                  },
-                  "parkName": {
-                    $first: "$parkName"
-                  },
-                  "parkZipCode": {
-                    $first: "$parkZipCode"
-                  },
-
+          {
+            $match: {
+              $and: [
+                {
+                  isRemoved: false
+                },
+                {
+                  $or: [
+                    {
+                      parkName: { $regex: searchTerm, $options: "g" }
+                    },
+                    {
+                      parkZipCode: { $regex: searchTerm, $options: "g" }
+                    }
+                  ]
                 }
+              ]
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              parkRating: 1,
+              isParkVerified: 1,
+              isRemoved: 1,
+              parkDefaultPic: 1,
+              parkPictures: 1,
+              parkLatestReviews: 1,
+              parkAmenities: 1,
+              parkDetails: 1,
+              pavilions: 1,
+              fields: 1,
+              editedBy: 1,
+              parkName: 1,
+              urbanId: 1,
+              parkZipCode: 1,
+              parkType: 1,
+              parkCity: 1,
+              parkCoordinate: 1,
+              parkAcreage: 1,
+              createdAt: 1,
+              updatedAt: 1,
+              parkId: 1
+            }
+          },
+
+          {
+            $group: {
+              "_id": {
+                "parkZipCode": "$parkZipCode",
+
               },
-              {
-                $project: {
-                  _id: 0,
-                  "parkCity":1,
-                  "parkName":1,
-                  "parkZipCode":1
-
-                }
+              "parkCity": {
+                $first: "$parkCity"
+              },
+              "parkName": {
+                $first: "$parkName"
+              },
+              "parkZipCode": {
+                $first: "$parkZipCode"
               },
 
-          ];
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              "parkCity": 1,
+              "parkName": 1,
+              "parkZipCode": 1
+
+            }
+          },
+
+        ];
 
     Park.aggregate(searchAggrQry).exec((err, item) => {
 
 
 
-      if(err){
+      if (err) {
         res.json({
           isError: true,
           message: errorMsgJSON[lang]["404"],
@@ -1131,34 +1132,34 @@ module.exports = {
         });
 
       }
-      else{
-        if(item.length==0){
+      else {
+        if (item.length == 0) {
 
 
-            res.json({
-              isError: false,
-              message: errorMsgJSON[lang]["1076"],
-              statuscode: 1076,
-              details: []
+          res.json({
+            isError: false,
+            message: errorMsgJSON[lang]["1076"],
+            statuscode: 1076,
+            details: []
 
           })
         }
-        else{
-          if(searchTerm==item[0].parkName ){
-            let agg=[
+        else {
+          if (searchTerm == item[0].parkName) {
+            let agg = [
               {
                 $match: {
-                    'parkName': item[0].parkName,
+                  'parkName': item[0].parkName,
 
                 },
 
-            },
-            {
-              $skip: itemToSkip
-            },
-            {
-              $limit: perPageItem
-            }
+              },
+              {
+                $skip: itemToSkip
+              },
+              {
+                $limit: perPageItem
+              }
             ]
             Park.aggregate(agg).exec((err, item) => {
               res.json({
@@ -1170,21 +1171,21 @@ module.exports = {
             })
 
           }
-         else if(searchTerm==item[0].parkZipCode){
-            let agg=[
+          else if (searchTerm == item[0].parkZipCode) {
+            let agg = [
               {
                 $match: {
-                    'parkCity': item[0].parkCity,
+                  'parkCity': item[0].parkCity,
 
                 },
 
-            },
-            {
-              $skip: itemToSkip
-            },
-            {
-              $limit: perPageItem
-            }
+              },
+              {
+                $skip: itemToSkip
+              },
+              {
+                $limit: perPageItem
+              }
             ]
             Park.aggregate(agg).exec((err, item) => {
               res.json({
@@ -1195,10 +1196,10 @@ module.exports = {
               })
             })
           }
-          else{
+          else {
 
-            let agg=  searchTerm == ""
-            ? [
+            let agg = searchTerm == ""
+              ? [
                 {
                   $match: {
                     isRemoved: false
@@ -1211,62 +1212,62 @@ module.exports = {
                   $limit: perPageItem
                 }
               ]
-            :[
-              {
-                $match: {
-                  $and: [
-                    {
-                      isRemoved: false
-                    },
-                    {
-                      $or: [
-                        {
-                          parkName: { $regex: searchTerm, $options: "g" }
-                        },
-                        {
-                          parkZipCode: { $regex: searchTerm, $options: "g" }
-                        }
-                      ]
-                    }
-                  ]
+              : [
+                {
+                  $match: {
+                    $and: [
+                      {
+                        isRemoved: false
+                      },
+                      {
+                        $or: [
+                          {
+                            parkName: { $regex: searchTerm, $options: "g" }
+                          },
+                          {
+                            parkZipCode: { $regex: searchTerm, $options: "g" }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  $project: {
+                    _id: 0,
+                    parkRating: 1,
+                    isParkVerified: 1,
+                    isRemoved: 1,
+                    parkDefaultPic: 1,
+                    parkPictures: 1,
+                    parkLatestReviews: 1,
+                    parkAmenities: 1,
+                    parkDetails: 1,
+                    pavilions: 1,
+                    fields: 1,
+                    editedBy: 1,
+                    parkName: 1,
+                    urbanId: 1,
+                    parkZipCode: 1,
+                    parkType: 1,
+                    parkCity: 1,
+                    parkCoordinate: 1,
+                    parkAcreage: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    parkId: 1
+                  }
+                },
+                {
+                  $skip: itemToSkip
+                },
+                {
+                  $limit: perPageItem
                 }
-              },
-              {
-                $project: {
-                  _id: 0,
-                  parkRating: 1,
-                  isParkVerified: 1,
-                  isRemoved: 1,
-                  parkDefaultPic: 1,
-                  parkPictures: 1,
-                  parkLatestReviews: 1,
-                  parkAmenities: 1,
-                  parkDetails: 1,
-                  pavilions: 1,
-                  fields: 1,
-                  editedBy: 1,
-                  parkName: 1,
-                  urbanId: 1,
-                  parkZipCode: 1,
-                 parkType: 1,
-                  parkCity: 1,
-                  parkCoordinate: 1,
-                  parkAcreage: 1,
-                  createdAt: 1,
-                  updatedAt: 1,
-                   parkId: 1
-                }
-              },
-              {
-                $skip: itemToSkip
-              },
-              {
-                $limit: perPageItem
-              }
 
 
 
-            ];
+              ];
             Park.aggregate(agg).exec((err, item) => {
               res.json({
                 isError: false,
@@ -1288,37 +1289,124 @@ module.exports = {
     });
   },
 
-  getSingleParkDetails : (req, res, next) => {
+  getSingleParkDetails: (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     var parkId = req.body.park_id
       ? req.body.park_id
       : res.json({
-        isError: true, statuscode: 303, details :null,message: errorMsgJSON[lang]["303"] + " Please provide park_id"
+        isError: true, statuscode: 303, details: null, message: errorMsgJSON[lang]["303"] + " Please provide park_id"
       });
 
-      Park.find({'parkId':parkId},function(err, response){
-        if (err) {
-          res.json({
-            isError: true,
-            message: errorMsgJSON[lang]["404"],
-            statuscode: 400,
-            details: null
-          });
-        } else {
-          // console.log(response);
-          res.json({
-            isError: false,
-            message: errorMsgJSON[lang]["200"],
-            statuscode: 200,
-            details: response[0]
-          });
+    Park.find({ 'parkId': parkId }, function (err, response) {
+      if (err) {
+        res.json({
+          isError: true,
+          message: errorMsgJSON[lang]["404"],
+          statuscode: 400,
+          details: null
+        });
+      } else {
+        // console.log(response);
+        res.json({
+          isError: false,
+          message: errorMsgJSON[lang]["200"],
+          statuscode: 200,
+          details: response[0]
+        });
+      }
+    })
+  },
+
+  generateNotificationsToAllCityManagers: (req, res, next) => {
+    let lang = req.headers.language ? req.headers.language : "EN";
+    console.log('this is req.body', req.body)
+
+    let aggrQry = [
+      {
+        $match: {
+          userType: 'CITY-MANAGER'
         }
+      },
+      {
+        $project: {
+          "_id": 0,
+          "userId": 1,
+          "userType": 1,
+          "isActive": 1,
+          "isApproved": 1,
+          "isLoggedIn": 1,
+          "name": 1,
+          "email": 1,
+          "mobile": 1,
+          "profileCreatedAt": 1,
+          "fcmToken": 1
+        }
+      }
+    ]
+
+    User.aggregate(aggrQry, function (err, response) {
+      if (err) {
+        res.json({
+          isError: true,
+          message: errorMsgJSON[lang]["404"],
+          statuscode: 400,
+          details: null
+        });
+      }
+      else {
+        if (response) {
+          Promise.all(response.filter(item => item.fcmToken).map(item => {
+            console.log('this is item._id', item)
+            return notificationService(item.fcmToken, item.userId, req.body.title || 'Notification title', req.body.title, req.body.description, req.body.badgeCount)
+          }))
+            .then(data => {
+              res.json({
+                isError: false,
+                message: errorMsgJSON[lang]["200"],
+                statuscode: 200,
+                details: response
+              });
+            })
+            .catch(err => {
+              res.json({
+                isError: true,
+                message: errorMsgJSON[lang]["404"],
+                statuscode: 400,
+                details: null
+              })
+            })
+
+        }
+      }
+    })
+  },
+
+  updateFcmToken: (req, res, next) => {
+    console.log('this is req.headers', req.body);
+    if (!req.body.fcmToken || !req.body.id) {
+      res.json({
+        isError: true,
+        message: 'fcmtoken is required'
+      })
+      return;
+    }
+    User.update({ _id: req.body.id }, { $set: { fcmToken: req.body.fcmToken } })
+      .then(() => {
+        res.json({ message: 'success' })
+
+      })
+      .catch(err => {
+        console.log('this is error', err)
+        res.json({
+          isError: true,
+          message: 'error comes in updating user'
+        })
       })
   },
 
 
 
-  getDashboardData: (req,res,next)=>{
+  getDashboardData: (req, res, next) => {
     // No of parks
     // No of cities/cityadmins
     // No of users
