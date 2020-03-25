@@ -38,7 +38,7 @@ class PushMessage extends React.Component {
     state = {
         title: '',
         description: '',
-        to: 'all'
+        to: 'users'
     }
     handleChange = (e) => {
         this.setState({
@@ -69,6 +69,8 @@ class PushMessage extends React.Component {
 
     }
     render() {
+        let user = localStorage.getItem('picnic_cityadmin_cred');
+        user = typeof user === 'string' ? JSON.parse(user) : user;
         console.log('this is the state in push message', this.state)
         let addBtn = {
             textAlign: "center",
@@ -185,9 +187,17 @@ class PushMessage extends React.Component {
                                                         <Col md="6">
                                                             <Label for="exampleSelect">Select</Label>
                                                             <Input type="select" name="to" id="to" onChange={this.handleChange} value={this.state.to}>
-                                                                <option value="all">All</option>
                                                                 <option value="users">Users</option>
-                                                                <option value="city-admins">City Admins</option>
+                                                                {
+                                                                    user.data.userType === 'SUPER-ADMIN' ? (
+                                                                        <React.Fragment>
+                                                                            <option value="all">All</option>
+                                                                            <option value="city-admins">City Admins</option>
+                                                                        </React.Fragment>
+                                                                    ) : ''
+                                                                }
+
+
                                                             </Input>
                                                         </Col>
                                                     </Row>
