@@ -26,8 +26,8 @@ import Login from "../../views/Pages/Login/Login";
 const DefaultFooter = React.lazy(() => import("./DefaultFooter"));
 const DefaultHeader = React.lazy(() => import("./DefaultHeader"));
 
-const logoutStyle={
-  cursor : 'pointer',
+const logoutStyle = {
+  cursor: 'pointer',
   // padding: '0px'
 }
 
@@ -36,7 +36,7 @@ class DefaultLayout extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isPaidUser:false
+      isPaidUser: false
     };
   }
 
@@ -63,23 +63,23 @@ class DefaultLayout extends Component {
       this.props.history.push("/login");
     } else {
       this.setState({ storage });
-      var pro =  localStorage.getItem('proFlag');
-      if(pro == 2) {
+      var pro = localStorage.getItem('proFlag');
+      if (pro == 2) {
         this.props.history.push("/package");
       } else {
-          this.setState({ isPaidUser: true });
+        this.setState({ isPaidUser: true });
       }
     }
   }
 
   handleClick(e) {
     e.preventDefault();
-      swal({
-        title: "Oops!",
-        text: "You dont have any active plan! Please Upgrade",
-        icon: "warning",
-        dangerMode: true,
-      })
+    swal({
+      title: "Oops!",
+      text: "You dont have any active plan! Please Upgrade",
+      icon: "warning",
+      dangerMode: true,
+    })
       .then(willupgrade => {
         if (willupgrade) {
           swal('', 'You will be redirected to upgrade page', 'success');
@@ -101,17 +101,17 @@ class DefaultLayout extends Component {
             <AppSidebarHeader />
             <AppSidebarForm />
             <Suspense>
-                <AppSidebarNav
-                  navConfig={navigation}
-                  {...this.props}
-                  router={router}
-                />
+              <AppSidebarNav
+                navConfig={navigation}
+                {...this.props}
+                router={router}
+              />
             </Suspense>
-              <AppSidebarFooter>
-                <a href="javascript:void(0)" className="nav-link" style={logoutStyle} onClick={e=>this.signOut(e)}>
-                  <i className="fa fa-sign-out"> Logout </i>
-                </a>
-              </AppSidebarFooter>
+            <AppSidebarFooter>
+              <a href="javascript:void(0)" className="nav-link" style={logoutStyle} onClick={e => this.signOut(e)}>
+                <i className="fa fa-sign-out"> Logout </i>
+              </a>
+            </AppSidebarFooter>
           </AppSidebar>
           <main className="main">
             <AppBreadcrumb appRoutes={routes} router={router} />
@@ -131,12 +131,12 @@ class DefaultLayout extends Component {
                   })}
                   {/* <Redirect from="/" to="/dashboard" /> */}
                   {localStorage.getItem("picnic_cityadmin_cred") &&
-                  Object.keys(localStorage.getItem("picnic_cityadmin_cred"))
-                    .length > 0 ? (
-                    <Redirect from="/" to="/dashboard" />
-                  ) : (
-                    <Redirect from="/" to="/login" />
-                  )}
+                    Object.keys(localStorage.getItem("picnic_cityadmin_cred"))
+                      .length > 0 ? (
+                      <Redirect from="/" to="/dashboard" />
+                    ) : (
+                      <Redirect from="/" to="/login" />
+                    )}
                 </Switch>
               </Suspense>
             </Container>

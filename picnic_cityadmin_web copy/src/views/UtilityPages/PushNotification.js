@@ -152,7 +152,7 @@ class PushNotifications extends Component {
                     <Col>
                         <Card>
                             <CardHeader>
-                                <i className="fa fa-align-justify" /> Park List
+                                <i className="fa fa-align-justify" /> Notifications List
                 <Link to="/pushmessage">
                                     <button className="btn btn-success btn-sm mr-2 float-right">
                                         Send Push Notification <i className="fa fa-edit" />
@@ -162,7 +162,7 @@ class PushNotifications extends Component {
                             <CardBody>
                                 {/* <Suspense  fallback={this.loading()}></Suspense> */}
 
-                                <FormGroup row>
+                                {/* <FormGroup row>
                                     <Col md="12">
                                         <InputGroup>
                                             <InputGroupAddon addonType="prepend">
@@ -180,7 +180,7 @@ class PushNotifications extends Component {
                                             />
                                         </InputGroup>
                                     </Col>
-                                </FormGroup>
+                                </FormGroup> */}
 
                                 <Row>
                                     <Table>
