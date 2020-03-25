@@ -44,24 +44,26 @@ class App extends Component {
 
 
   componentDidMount() {
+    let user = localStorage.getItem('picnic_cityadmin_cred');
+    console.log('this is user', user);
+    user = typeof user === 'string' ? JSON.parse(user) : user;
     messaging.requestPermission()
       .then(async function () {
         const token = await messaging.getToken();
         console.log('this is registration token', token)
         await axios.post(path + 'update_fcm', {
-          fcmToken: token
+          fcmToken: token,
+          id: user.data._id
         })
         messaging.onTokenRefresh(async () => {
           messaging.getToken().then(async (refreshedToken) => {
             console.log('Token refreshed.');
             // Indicate that the new Instance ID token has not yet been sent to the
             // app server.
-            let user = localStorage.getItem('picnic_cityadmin_cred');
-            console.log('this is user', user);
-            user = typeof user === 'string' ? JSON.parse(user) : user;
+
 
             await axios.post(path + 'update_fcm', {
-              fcmToken: token,
+              fcmToken: refreshedToken,
               id: user.data._id
             })
             // ...
