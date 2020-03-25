@@ -1462,14 +1462,14 @@ module.exports = {
       })
       return;
     }
-    const nots = await PushNotification.find({ userId: req.body.userId });
+    const nots = await PushNotification.find({ userId: req.body.userId }).sort({ createdAt: -1 });
     res.json({
       isError: false,
       data: nots
     })
   },
 
-  updateFcmToken: (req, res, next) => {
+  updateFcmToken: async (req, res, next) => {
     console.log('this is req.headers', req.body);
     if (!req.body.fcmToken || !req.body.id) {
       res.json({
