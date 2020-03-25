@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("../models/user");
+const PushNotification = require("../models/pushnotifications");
 const Park = require("../models/park");
 const Amenity = require("../models/amenity");
 const City = require("../models/city");
@@ -1317,32 +1318,104 @@ module.exports = {
     })
   },
 
-  generateNotificationsToAllCityManagers: (req, res, next) => {
+  generateNotificationsToAllCityManagers: async (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     console.log('this is req.body', req.body)
+    if (!(req.body.title && req.body.description && req.body.userId && req.body.to)) {
+      res.json({
+        isError: true,
+        message: 'all fields are required (title,description,userId,to)'
+      })
+      return;
+    }
+    const toValues = ['all', 'users', 'city-admins'];
+    if (!toValues.includes(req.body.to)) {
+      res.json({
+        isError: true,
+        message: `to value should be on of ${toValues}`
+      })
+      return;
+    }
+    const { title, userId, description, to } = req.body;
+    const pushNotification = new PushNotification({
+      title, userId, description, to
+    })
+    const createdPushNotification = await pushNotification.save();
 
-    let aggrQry = [
-      {
-        $match: {
-          userType: 'CITY-MANAGER'
+    // User.find({ userType: 'USER', cityId: { $exists: true, $ne: '' } }).then(data => console.log('this is data', data))
+    let aggrQry = []
+    if (req.body.to === 'city-admins') {
+      aggrQry = [
+        {
+          $match: {
+            userType: 'CITY-MANAGER'
+          }
+        },
+        {
+          $project: {
+            "_id": 0,
+            "userId": 1,
+            "userType": 1,
+            "isActive": 1,
+            "isApproved": 1,
+            "isLoggedIn": 1,
+            "name": 1,
+            "email": 1,
+            "mobile": 1,
+            "profileCreatedAt": 1,
+            "fcmToken": 1
+          }
         }
-      },
-      {
-        $project: {
-          "_id": 0,
-          "userId": 1,
-          "userType": 1,
-          "isActive": 1,
-          "isApproved": 1,
-          "isLoggedIn": 1,
-          "name": 1,
-          "email": 1,
-          "mobile": 1,
-          "profileCreatedAt": 1,
-          "fcmToken": 1
+      ]
+    } else if (req.body.to === 'users') {
+      aggrQry = aggrQry = [
+        {
+          $match: {
+            userType: 'USER'
+          }
+        },
+        {
+          $project: {
+            "_id": 0,
+            "userId": 1,
+            "userType": 1,
+            "isActive": 1,
+            "isApproved": 1,
+            "isLoggedIn": 1,
+            "name": 1,
+            "email": 1,
+            "mobile": 1,
+            "profileCreatedAt": 1,
+            "fcmToken": 1
+          }
         }
-      }
-    ]
+      ]
+    } else {
+      aggrQry = aggrQry = [
+        {
+          $match: {
+            $or: [{ userType: 'CITY-MANAGER' }, { userType: 'USER' }]
+
+          }
+        },
+        {
+          $project: {
+            "_id": 0,
+            "userId": 1,
+            "userType": 1,
+            "isActive": 1,
+            "isApproved": 1,
+            "isLoggedIn": 1,
+            "name": 1,
+            "email": 1,
+            "mobile": 1,
+            "profileCreatedAt": 1,
+            "fcmToken": 1
+          }
+        }
+      ]
+    }
+
 
     User.aggregate(aggrQry, function (err, response) {
       if (err) {
@@ -1357,7 +1430,7 @@ module.exports = {
         if (response) {
           Promise.all(response.filter(item => item.fcmToken).map(item => {
             console.log('this is item._id', item)
-            return notificationService(item.fcmToken, item.userId, req.body.title || 'Notification title', req.body.title, req.body.description, req.body.badgeCount)
+            return notificationService(item.fcmToken, item.userId, req.body.title || 'Notification title', req.body.title, req.body.description, createdPushNotification._id, req.body.badgeCount)
           }))
             .then(data => {
               res.json({
@@ -1378,6 +1451,21 @@ module.exports = {
 
         }
       }
+    })
+  },
+
+  getAllPushNotifications: async (req, res) => {
+    if (!req.body.userId) {
+      res.json({
+        isError: true,
+        message: 'userId is required'
+      })
+      return;
+    }
+    const nots = await PushNotification.find({ userId: req.body.userId });
+    res.json({
+      isError: false,
+      data: nots
     })
   },
 

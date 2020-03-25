@@ -30,6 +30,11 @@ export default {
       url: '/pushmessage',
       icon: 'icon-envelope'
     },
+    {
+      name: 'Push Notifications',
+      url: '/pushNotifications',
+      icon: 'icon-envelope'
+    },
 
   ],
 };

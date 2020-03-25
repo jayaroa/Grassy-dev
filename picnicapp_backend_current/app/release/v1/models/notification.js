@@ -24,7 +24,8 @@ const notificationSchema = new Schema({
     viewed: {
         type: Boolean,
         default: false
-    }
+    },
+    pushNotificationId: { type: String, required: true }
 }, {
     timestamps: true,
 });

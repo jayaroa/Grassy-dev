@@ -59,7 +59,7 @@ admin.initializeApp({
 });
 
 
-module.exports = (devicetoken, userId, name, title, body = "Welcome to Grassy", badgeCount = 0) => {
+module.exports = (devicetoken, userId, name, title, body = "Welcome to Grassy", pushNotificationId, badgeCount = 0) => {
 
 
 
@@ -116,6 +116,7 @@ module.exports = (devicetoken, userId, name, title, body = "Welcome to Grassy", 
                     description: body,
                     sourceId: userId,
                     userId: userId,
+                    pushNotificationId
                 })
                 notification.save()
                     .then(data => {

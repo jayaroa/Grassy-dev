@@ -37,7 +37,8 @@ var path = cred.API_PATH + "admin/";
 class PushMessage extends React.Component {
     state = {
         title: '',
-        description: ''
+        description: '',
+        to: 'all'
     }
     handleChange = (e) => {
         this.setState({
@@ -45,15 +46,30 @@ class PushMessage extends React.Component {
         })
     }
     handleSubmit = async () => {
-        let user = localStorage.getItem('picnic_cityadmin_cred');
-        console.log('this is user', user);
-        user = typeof user === 'string' ? JSON.parse(user) : user;
-        const { title, description } = this.state
-        // if (user.padStart.userType === 'admin') {
-        await axios.post(path + 'generate_notifications_park_manager', { title, description })
-        // }
+        try {
+            let user = localStorage.getItem('picnic_cityadmin_cred');
+            console.log('this is user', user);
+            user = typeof user === 'string' ? JSON.parse(user) : user;
+            const { title, description, to } = this.state
+            // if (user.padStart.userType === 'admin') {
+            const res = await axios.post(path + 'generate_notifications_park_manager', { title, description, to, userId: user.data._id })
+            if (res.data.isError) {
+                alert(res.data.message)
+            }
+            this.setState({
+                title: '',
+                description: '',
+                to: 'all'
+            })
+            // }
+        } catch (err) {
+            console.log('this is the error', err)
+            alert('error comes in sending notification')
+        }
+
     }
     render() {
+        console.log('this is the state in push message', this.state)
         let addBtn = {
             textAlign: "center",
             padding: "30px 0px",
@@ -158,11 +174,22 @@ class PushMessage extends React.Component {
                                                                 }
                                                                 placeholder="Enter Title"
                                                                 onChange={event => this.handleChange(event)}
+                                                                required
                                                             />
                                                         </Col>
 
 
 
+                                                    </Row>
+                                                    <Row>
+                                                        <Col md="6">
+                                                            <Label for="exampleSelect">Select</Label>
+                                                            <Input type="select" name="to" id="to" onChange={this.handleChange} value={this.state.to}>
+                                                                <option value="all">All</option>
+                                                                <option value="users">Users</option>
+                                                                <option value="city-admins">City Admins</option>
+                                                            </Input>
+                                                        </Col>
                                                     </Row>
                                                     <Row style={mb20}>
                                                         <Col md="10">
@@ -175,10 +202,11 @@ class PushMessage extends React.Component {
                                                                 onChange={event => this.handleChange(event)}
                                                                 style={{ width: '100%' }}
                                                                 rows={8}
+                                                                required
                                                             />
                                                         </Col>
                                                     </Row>
-                                                    {/* Park pictures */}
+
                                                 </FormGroup>
                                             </Col>
                                         </Row>
