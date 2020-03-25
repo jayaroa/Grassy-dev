@@ -1,0 +1,15 @@
+version: "3"
+services:
+    server:
+        build:
+            context: ./picnicapp_backend_current
+            dockerfile: Dockerfile 
+    # volumes:
+    #     - /app/node_modules
+    #     - ./picnicapp_backend_current:/app
+        volumes:
+            - /app/node_modules
+            - ./picnicapp_backend_current:/app    
+        ports:
+            - "3132:3132"
+            - "3232:3232"         
