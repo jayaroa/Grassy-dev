@@ -19,6 +19,8 @@ import {
     InputGroup,
     InputGroupAddon
 } from "reactstrap";
+import PushMessage from './PushMessage'
+import RPagination from 'react-js-pagination'
 import cred from "../../cred.json";
 var path = cred.API_PATH + "admin/";
 var path2 = cred.API_PATH + "cityadmin/";
@@ -34,9 +36,12 @@ class PushNotifications extends Component {
             allParks: [],
             value: "",
             city_name: "",
-            notifications: []
+            notifications: [],
+            title: '',
+            description: '',
+            to: 'users'
         };
-        this.handleChange = this.handleChange.bind(this);
+        // this.handleChange = this.handleChange.bind(this);
     }
 
     // loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
@@ -49,13 +54,19 @@ class PushNotifications extends Component {
         const data = await axios.post(path + 'get_push_notifications', { userId: user.data._id });
         console.log('this is the data of push notitfications', data)
         this.setState({ city_name: cityAdminCity, notifications: data.data.data });
-        this.getAllCityParks(cityAdminCity);
     }
 
-    handleChange(event) {
-        this.setState({ value: event.target.value });
-        this.searchCityParks(event.target.value);
+    // handleChange(event) {
+    //     this.setState({ value: event.target.value });
+    //     this.searchCityParks(event.target.value);
+    // }
+
+    handleChange = (e) => {
+        this.setState({
+            [e.target.name]: e.target.value
+        })
     }
+
 
     getAllCityParks(cityAdminCityName) {
         axios
@@ -120,6 +131,32 @@ class PushNotifications extends Component {
         this.props.history.push(`/parklist/parkdetails/${parkId}`);
     }
 
+    handleSubmit = async () => {
+        try {
+            let user = localStorage.getItem('picnic_cityadmin_cred');
+            console.log('this is user', user);
+            user = typeof user === 'string' ? JSON.parse(user) : user;
+            const { title, description, to } = this.state
+            // if (user.padStart.userType === 'admin') {
+            const res = await axios.post(path + 'generate_notifications_park_manager', { title, description, to, userId: user.data._id })
+            if (res.data.isError) {
+                alert(res.data.message);
+                return;
+            }
+            this.setState({
+                title: '',
+                description: '',
+                to: 'users',
+                notifications: [res.data.details].concat(this.state.notifications)
+            })
+            // }
+        } catch (err) {
+            console.log('this is the error', err)
+            alert('error comes in sending notification')
+        }
+
+    }
+
     render() {
         // let pavImgThumb = {
         //   width: '100%',
@@ -148,16 +185,13 @@ class PushNotifications extends Component {
 
         return (
             <div className="animated fadeIn">
+                <PushMessage {...this.state} handleChange={this.handleChange} handleSubmit={this.handleSubmit} ></PushMessage>
                 <Row>
                     <Col>
                         <Card>
                             <CardHeader>
                                 <i className="fa fa-align-justify" /> Notifications List
-                <Link to="/pushmessage">
-                                    <button className="btn btn-success btn-sm mr-2 float-right">
-                                        Send Push Notification <i className="fa fa-edit" />
-                                    </button>
-                                </Link>
+
                             </CardHeader>
                             <CardBody>
                                 {/* <Suspense  fallback={this.loading()}></Suspense> */}
@@ -196,7 +230,7 @@ class PushNotifications extends Component {
                                             {
                                                 this.state.notifications.map((item, index) => {
                                                     return (
-                                                        <tr>
+                                                        <tr key={item._id}>
                                                             <th scope="row">{index + 1}</th>
                                                             <td>{item.title}</td>
                                                             <td>{item.to}</td>
@@ -209,42 +243,20 @@ class PushNotifications extends Component {
 
                                         </tbody>
                                     </Table>
-                                    {/* {this.state.allParks.map(eachDetails => (
-                                        <Col md="4" key={eachDetails.parkId}>
-                                            <Card>
-                                                <CardBody style={noPadding}>
-                                                    <img
-                                                        src={eachDetails.parkDefaultPic}
-                                                        className="pavImgThumb"
-                                                    />
-                                                </CardBody>
-                                                <CardFooter>
-                                                    <Row>
-                                                        <Col md="8"> {eachDetails.parkName}</Col>
-                                                        <Col md="4" style={availableOptions}>
-                                                            <span>
-                                                                <i
-                                                                    className="fa fa-trash"
-                                                                    style={deleteIconStyle}
-                                                                    onClick={() =>
-                                                                        this.removePark(eachDetails.parkId)
-                                                                    }
-                                                                />
-                                                                <i
-                                                                    className="fa fa-edit"
-                                                                    style={editIconStyle}
-                                                                    onClick={() =>
-                                                                        this.editPark(eachDetails.parkId)
-                                                                    }
-                                                                />
-                                                            </span>
-                                                        </Col>
-                                                    </Row>
-                                                </CardFooter>
-                                            </Card>
-                                        </Col>
-                                    ))} */}
+
+
                                 </Row>
+                                {/* <Row>
+                                    <Col sm="12" md={{ size: 8, offset: 2 }}>
+                                        <RPagination
+                                            ctivePage={this.state.activePage || 3}
+                                            itemsCountPerPage={10}
+                                            totalItemsCount={450}
+                                            pageRangeDisplayed={5}
+                                            onChange={this.handlePageChange}
+                                        />
+                                    </Col>
+                                </Row> */}
                             </CardBody>
                         </Card>
                     </Col>

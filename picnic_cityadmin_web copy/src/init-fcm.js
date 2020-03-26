@@ -4,14 +4,13 @@ import "firebase/messaging";
 
 const initializedFirebaseApp = firebase.initializeApp({
     // Project Settings => Add Firebase to your web app
-    apiKey: "AIzaSyC4N5prLXhCLmD1ApzT3Kva1Rci5qG-gC0",
-    authDomain: "test-grassy.firebaseapp.com",
-    databaseURL: "https://test-grassy.firebaseio.com",
-    projectId: "test-grassy",
-    storageBucket: "test-grassy.appspot.com",
-    messagingSenderId: "59027773799",
-    appId: "1:59027773799:web:07c1003e44ed643edef7c2",
-    measurementId: "G-V9R6P3MPX6"
+    apiKey: "AIzaSyD2vYysO4Ynh_P75CN32Dn8aIa4kpVFT4A",
+    authDomain: "grassy-app-notifications.firebaseapp.com",
+    databaseURL: "https://grassy-app-notifications.firebaseio.com",
+    projectId: "grassy-app-notifications",
+    storageBucket: "grassy-app-notifications.appspot.com",
+    messagingSenderId: "86299299762",
+    appId: "1:86299299762:web:6d9698d9b104fcb1405eab"
 });
 const messaging = initializedFirebaseApp.messaging();
 // messaging.usePublicVapidKey(

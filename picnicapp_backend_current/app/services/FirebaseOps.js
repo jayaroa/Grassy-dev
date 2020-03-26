@@ -50,12 +50,12 @@
 var admin = require('firebase-admin')
 
 
-var serviceAccount = require("../release/v1/config/globals/test-grassy-firebase-adminsdk-llma2-929850a8a0.json");
+var serviceAccount = require("../release/v1/config/globals/grassy-app.json");
 var Notification = require('../release/v1/models/notification');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://test-grassy.firebaseio.com"
+    databaseURL: "https://grassy-app-notifications.firebaseio.com"
 });
 
 

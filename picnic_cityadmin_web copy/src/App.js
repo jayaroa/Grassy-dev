@@ -78,7 +78,7 @@ class App extends Component {
       });
     navigator.serviceWorker.addEventListener("message", (message) => {
       console.log('this is message', message)
-      NotificationManager.info(message.data ? message.data['firebase-messaging-msg-data'].notification.body : 'message', message.data ? message.data['firebase-messaging-msg-data'].notification.title : 'message')
+      message.data && NotificationManager.info(message.data['firebase-messaging-msg-data'].notification.body, message.data['firebase-messaging-msg-data'].notification.title)
       this.setState({
         message
       })

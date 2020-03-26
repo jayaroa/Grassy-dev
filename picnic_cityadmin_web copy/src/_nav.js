@@ -25,11 +25,7 @@ export default {
       url: '/pictureContests',
       icon: 'icon-people'
     },
-    {
-      name: 'Message',
-      url: '/pushmessage',
-      icon: 'icon-envelope'
-    },
+
     {
       name: 'Push Notifications',
       url: '/pushNotifications',
