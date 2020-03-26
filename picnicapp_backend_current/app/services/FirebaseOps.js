@@ -50,7 +50,7 @@
 var admin = require('firebase-admin')
 
 
-var serviceAccount = require("../release/v1/config/globals/grassy-app.json");
+var serviceAccount = require("../release/v1/config/globals/grassy-app-notifications-firebase-adminsdk-zvvob-80e940dc0c.json");
 var Notification = require('../release/v1/models/notification');
 
 admin.initializeApp({

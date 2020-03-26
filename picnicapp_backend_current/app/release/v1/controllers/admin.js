@@ -1321,7 +1321,7 @@ module.exports = {
   generateNotificationsToAllCityManagers: async (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     console.log('this is req.body', req.body)
-    if (!(req.body.title && req.body.description && req.body.userId && req.body.to)) {
+    if (!(req.body.title && req.body.description && req.body.userId && req.body.to && req.body.cityId && req.body.cityName && req.body.user)) {
       res.json({
         isError: true,
         message: 'all fields are required (title,description,userId,to)'
@@ -1336,7 +1336,7 @@ module.exports = {
       })
       return;
     }
-    const { title, userId, description, to } = req.body;
+    const { title, userId, description, to, cityName, cityId } = req.body;
     const pushNotification = new PushNotification({
       title, userId, description, to
     })
@@ -1368,28 +1368,69 @@ module.exports = {
         }
       ]
     } else if (req.body.to === 'users') {
-      aggrQry = aggrQry = [
-        {
-          $match: {
-            userType: 'USER'
+      console.log('this is the cityId', req.body.cityName)
+      const updatedPark = await Park.updateOne({
+        isRemoved: false,
+        parkCity: cityName.toUpperCase()
+      }, { $addToSet: { "favouriteUser": req.body.user } });
+      try {
+        const parks = await Park.aggregate([
+          {
+            $match: {
+              isRemoved: false,
+              parkCity: cityName.toUpperCase()
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              parkId: 1,
+              parkName: 1,
+              parkDefaultPic: 1,
+              parkRating: 1,
+              cityName: 1,
+              cityId: 1,
+              favouriteUser: 1
+            }
+          },
+          // {
+          //   $skip: itemToSkip
+          // },
+          // {
+          //   $limit: perPageItem
+          // }
+        ]);
+        console.log('this is the park', parks);
+        await Promise.all(parks.map(async (item) => {
+          let users = []
+          if (item.favouriteUser && item.favouriteUser.length) {
+            users = await User.find({ userId: { $in: item.favouriteUser } })
           }
-        },
-        {
-          $project: {
-            "_id": 0,
-            "userId": 1,
-            "userType": 1,
-            "isActive": 1,
-            "isApproved": 1,
-            "isLoggedIn": 1,
-            "name": 1,
-            "email": 1,
-            "mobile": 1,
-            "profileCreatedAt": 1,
-            "fcmToken": 1
-          }
-        }
-      ]
+          console.log('this is the users', users)
+          await Promise.all(users.filter(usr => usr.fcmToken).map(usr => {
+            console.log('this is usr._id', usr)
+            return notificationService(usr.fcmToken, usr.userId, req.body.title || 'Notification title', req.body.title, req.body.description, createdPushNotification._id, req.body.badgeCount)
+          }))
+          return users
+        }));
+        res.json({
+          isError: false,
+          message: errorMsgJSON[lang]["200"],
+          statuscode: 200,
+          details: createdPushNotification
+        });
+        return;
+      } catch (err) {
+        res.json({
+          isError: true,
+          message: errorMsgJSON[lang]["404"],
+          statuscode: 400,
+          details: null
+        });
+        return;
+      }
+
+
     } else {
       aggrQry = aggrQry = [
         {
