@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "grassy-app-notifications",
+  "private_key_id": "cabfb536d526283b7d9d5599809b99d42e5cbc33",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQChYbRR3siaXhvB\naijdKLcSgeB9CNdBGaFkqAVSNXYSIFjF4xsB33HEFPI8KAbEpwJ2jR+wp/Cc69Pr\njiyBW7K/DbTpmJmFLdsOA4uF0tozRtTaaeXfvDTWjh5XalmZySD8Zs2xhw/fUAeu\nS6QQZ6bDLJwD0cjy1kgahLeHg3zPnoQiKedBit0vWZqeF0M5yuBfDZV1o0PP5OJm\nF/TxKj/n+80eUHdchkM9BGRYOqlE3RZc3JKYGU36/npJJ654jizLSgYjn1f5TaCn\nC7NbMhc1asY+F6JtKRFj/K5NqnzmkBLtNxHZVoXJ4XeW3t95nPKDI6xoyYa+VhoO\nrHTkuFuFAgMBAAECggEAB739o17bg10H768Vikn5gcZgJsd4N4aQrFj2NmPbsqds\nHYRAHQZ4pAD4P7lmMmQrv/8UZIp4sTfhc7/J8/kaTxmhKALFkggpkJd2x62zq6RB\nMmrvAl06W1+35hbd+RIshlyyj2As0K27d0RoOM7sMcQFBmw3pn9wDUZNiA9fZcDA\nJcVK36pLZT+yoZHbE460Q/Hq0xOjgjYnfovDCTF9aU7K+vA5WAbEtWP8keTI9jWA\n9W2vAtcVbIrfisoW4QgAcWejqvjZRED2104+kPdw5kPJK8ww9ghP3/daRNWnuMWp\nr6FqaQlDj/NFl6aR6UkqdtjLvcQ2abyy1Bbl0NLJ4QKBgQDRSkUA4yc2eUx4klVl\np/8Jfzy9AtwcGaLqggHh1QViTUJ7Pkg/l7h4mfzAHrjh/2DRjfgLPBcLWIM9LxxW\nsIPeLmPqmIVi9rHuBluhmBzMplrJ3z80cugwwz5UwlmqCoI0gZak0daJYLCUKE8o\n6fAOtnahLWkF43MtXMyZnfrSoQKBgQDFZjLrFMM5GVa6hbBf9irtrk17WUL+Ai9K\nzAZ5u8H4GocICHEfJuOKGKnALQwpUYnvJLNhpuWA2g4t9tauvObesralULFZnrss\na8UDIuIdRx37cN8Vz/kHhnyN+pKTI3wjl6JZfeNXRKATE8n1lKSEURNKRnYErQJZ\nM36hxF4CZQKBgA1ymzpyXgunAZ3hsTEF+WIv1cRDUcdQcmJlFh/foyfs1O+8UcIc\nSpMdOdtSXgjPcvYkDCMUqlplRpGA3G5Jiz+UdYEWacOxHD+yEuMwNfGEYuMDwDjr\nhTXU5cVmc4J0iGc9SGOww/sxxkbOzD9RwMYBPWAf3dauBbGNe+wG9Z3hAoGBAKwO\nV0Vl9H95YYn0avZJl8NRkQF5nRXPi68TRHWovPnnDVloGkl/2QaOVq9F1HrTMnn6\nMExmb1YvOfrAUwE9b7IebWqMefjWjOi8Cp2gMxw3159JE3lsq+/uPfR2unl7jYFs\ncrq0KorvKuNV9UuTww39qOWtosKSliBv7OlNQm+tAoGBAJzxh3pivw47i2Xa5hKb\nNUmnV1F1ypvvFh6QZnES2C0ha9R4WWBR7utBfJysGJ2KseXq99LXuwAzLuxoWp/P\ndm7ZtvMIbgNWSxFmY09BjUPrc2wtcZaMjYq8Q2R9gwUqDzAx7kVu7UOSZ/ZSD4ji\ntehq6QTZDONCdAwccyvRBzXA\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-zvvob@grassy-app-notifications.iam.gserviceaccount.com",
+  "client_id": "108432029855176719392",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-zvvob%40grassy-app-notifications.iam.gserviceaccount.com"
+}

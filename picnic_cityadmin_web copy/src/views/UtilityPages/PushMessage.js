@@ -35,39 +35,6 @@ var path = cred.API_PATH + "admin/";
 
 
 class PushMessage extends React.Component {
-    state = {
-        title: '',
-        description: '',
-        to: 'users'
-    }
-    handleChange = (e) => {
-        this.setState({
-            [e.target.name]: e.target.value
-        })
-    }
-    handleSubmit = async () => {
-        try {
-            let user = localStorage.getItem('picnic_cityadmin_cred');
-            console.log('this is user', user);
-            user = typeof user === 'string' ? JSON.parse(user) : user;
-            const { title, description, to } = this.state
-            // if (user.padStart.userType === 'admin') {
-            const res = await axios.post(path + 'generate_notifications_park_manager', { title, description, to, userId: user.data._id })
-            if (res.data.isError) {
-                alert(res.data.message)
-            }
-            this.setState({
-                title: '',
-                description: '',
-                to: 'all'
-            })
-            // }
-        } catch (err) {
-            console.log('this is the error', err)
-            alert('error comes in sending notification')
-        }
-
-    }
     render() {
         let user = localStorage.getItem('picnic_cityadmin_cred');
         user = typeof user === 'string' ? JSON.parse(user) : user;
@@ -147,6 +114,7 @@ class PushMessage extends React.Component {
         let flexDisplay2 = {
             flex: "1"
         };
+        const { title, description, to, handleChange, handleSubmit } = this.props
 
         return (
             <div className="animated fadeIn">
@@ -170,12 +138,12 @@ class PushMessage extends React.Component {
                                                                 type="text"
                                                                 name="title"
                                                                 value={
-                                                                    this.state.title
-                                                                        ? this.state.title
+                                                                    title
+                                                                        ? title
                                                                         : ""
                                                                 }
                                                                 placeholder="Enter Title"
-                                                                onChange={event => this.handleChange(event)}
+                                                                onChange={event => handleChange(event)}
                                                                 required
                                                             />
                                                         </Col>
@@ -183,10 +151,10 @@ class PushMessage extends React.Component {
 
 
                                                     </Row>
-                                                    <Row>
+                                                    {/* <Row>
                                                         <Col md="6">
                                                             <Label for="exampleSelect">Select</Label>
-                                                            <Input type="select" name="to" id="to" onChange={this.handleChange} value={this.state.to}>
+                                                            <Input type="select" name="to" id="to" onChange={this.props.handleChange} value={to}>
                                                                 <option value="users">Users</option>
                                                                 {
                                                                     user.data.userType === 'SUPER-ADMIN' ? (
@@ -200,16 +168,16 @@ class PushMessage extends React.Component {
 
                                                             </Input>
                                                         </Col>
-                                                    </Row>
+                                                    </Row> */}
                                                     <Row style={mb20}>
                                                         <Col md="10">
                                                             <Label>Description</Label><br />
                                                             <textarea
                                                                 type="text"
                                                                 name="description"
-                                                                value={this.state.description}
+                                                                value={description}
                                                                 placeholder="Enter Description"
-                                                                onChange={event => this.handleChange(event)}
+                                                                onChange={event => handleChange(event)}
                                                                 style={{ width: '100%' }}
                                                                 rows={8}
                                                                 required
@@ -227,9 +195,9 @@ class PushMessage extends React.Component {
                                 <Row className="justify-content-end" style={borderTop}>
                                     <Button
                                         className="btn btn-success submitStyle"
-                                        onClick={() => this.handleSubmit()}
+                                        onClick={() => handleSubmit()}
                                     >
-                                        Send
+                                        Send To Users
                         </Button>
                                     <Link to="/contests">
                                         <Button className="btn btn-default submitStyle mx-3">

@@ -1415,8 +1415,6 @@ module.exports = {
         }
       ]
     }
-
-
     User.aggregate(aggrQry, function (err, response) {
       if (err) {
         res.json({
@@ -1437,7 +1435,7 @@ module.exports = {
                 isError: false,
                 message: errorMsgJSON[lang]["200"],
                 statuscode: 200,
-                details: response
+                details: createdPushNotification
               });
             })
             .catch(err => {
