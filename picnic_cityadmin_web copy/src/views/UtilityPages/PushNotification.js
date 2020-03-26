@@ -138,7 +138,7 @@ class PushNotifications extends Component {
             user = typeof user === 'string' ? JSON.parse(user) : user;
             const { title, description, to } = this.state
             // if (user.padStart.userType === 'admin') {
-            const res = await axios.post(path + 'generate_notifications_park_manager', { title, description, to, userId: user.data._id })
+            const res = await axios.post(path + 'generate_notifications_park_manager', { title, description, to, userId: user.data._id, cityId: user.data.cityId, cityName: user.data.cityName, user: user.data.userId })
             if (res.data.isError) {
                 alert(res.data.message);
                 return;
