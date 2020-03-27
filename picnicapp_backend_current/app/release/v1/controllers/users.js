@@ -670,6 +670,43 @@ module.exports = {
 
   },
 
+  subscribeUser: async (req, res, next) => {
+    if (!req.body.userId || !req.body.cityId) {
+      res.json({
+        isError: true,
+        message: 'userid and cityid are required'
+      })
+      return;
+    }
+    const foundUser = await User.findOne({ cityId: req.body.cityId });
+    console.log('this is the foudnuser', foundUser)
+    if (!foundUser) {
+      res.json({
+        isError: true,
+        message: 'cityadmin not found with this cityId'
+      })
+      return;
+    }
+    if (foundUser.subscribedUsers && foundUser.subscribedUsers.length && foundUser.subscribedUsers.includes(req.body.userId)) {
+      res.json({
+        isError: true,
+        message: 'you are already subscribed to this user'
+      })
+      return;
+    }
+    await User.updateOne({ cityId: req.body.cityId },
+      {
+        $addToSet: { "subscribedUsers": req.body.userId }
+      })
+
+    res.json({
+      isError: false,
+      message: 'user subscribed successfully'
+    })
+
+
+  },
+
   /**
    * @description :  // common sign-up process for any type of user (SUPER-ADMIN, CITY-ADMIN, USER)
    */

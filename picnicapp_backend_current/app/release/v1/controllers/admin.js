@@ -1369,11 +1369,21 @@ module.exports = {
       ]
     } else if (req.body.to === 'users') {
       console.log('this is the cityId', req.body.cityName)
-      const updatedPark = await Park.updateOne({
-        isRemoved: false,
-        parkCity: cityName.toUpperCase()
-      }, { $addToSet: { "favouriteUser": req.body.user } });
+      // const updatedPark = await Park.updateOne({
+      //   isRemoved: false,
+      //   parkCity: cityName.toUpperCase()
+      // }, { $addToSet: { "favouriteUser": req.body.user } });
       try {
+        const user = await User.findOne({ _id: req.body.userId })
+        if (user && user.subscribedUsers && user.subscribedUsers.length) {
+          await Promise.all(user.subscribedUsers.map(async (item) => {
+            const foundUser = await User.findOne({ _id: item });
+            if (foundUser) {
+              return notificationService(foundUser.fcmToken, foundUser.userId, req.body.title || 'Notification title', req.body.title, req.body.description, createdPushNotification._id, req.body.badgeCount)
+            }
+            return;
+          }))
+        }
         const parks = await Park.aggregate([
           {
             $match: {
@@ -1509,7 +1519,6 @@ module.exports = {
   },
 
   updateFcmToken: async (req, res, next) => {
-    await PushNotification.remove({})
     console.log('this is req.headers', req.body);
     if (!req.body.fcmToken || !req.body.id) {
       res.json({

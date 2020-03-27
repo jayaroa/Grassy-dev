@@ -86,6 +86,7 @@ const userSchema = new mongoose.Schema({
     userImage: String,
     cityName: String,
     cityId: String,
+    subscribedUsers: [String],
 },
     {
         timestamps: true, // add created_at , updated_at at the time of insert/update
