@@ -9,7 +9,7 @@ var cors = require('cors');
 //=============================
 
 router.use(express.json());
-router.use(express.urlencoded({extended:true}))
+router.use(express.urlencoded({ extended: true }))
 
 
 
@@ -22,9 +22,10 @@ router.post('/get_citywise_park_list', userCtrl.getCityParkList);
 router.post('/get_park_list', userCtrl.getParkList);
 router.post('/get_park_detail', userCtrl.getParkDetail);
 router.post('/get_filter_list', userCtrl.getFilter);
-router.post('/get_park_list_with_filter',checkAuth, userCtrl.applyFilter);
+router.post('/get_park_list_with_filter', checkAuth, userCtrl.applyFilter);
 router.post('/get_cityzipwise_park_list', userCtrl.getCityZipParkList);
 router.post('/get_city_list', userCtrl.getCityList);
+router.post('/subscribe_user', userCtrl.subscribeUser)
 
 //----------------------------------------------------------------------
 router.post('/get-city-list-for-mob-app', userCtrl.getCityListForMobApp);
