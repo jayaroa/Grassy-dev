@@ -132,21 +132,36 @@ class PushMessage extends React.Component {
                                             <Col md="12">
                                                 <FormGroup>
                                                     <Row style={mb20}>
-                                                        <Col md="6">
-                                                            <Label htmlFor="mobile">Title</Label>
-                                                            <Input
-                                                                type="text"
-                                                                name="title"
-                                                                value={
-                                                                    title
-                                                                        ? title
-                                                                        : ""
-                                                                }
-                                                                placeholder="Enter Title"
-                                                                onChange={event => handleChange(event)}
-                                                                required
-                                                            />
+                                                        <Col md="12">
+                                                            <Label htmlFor="mobile">Message</Label>
+                                                            <Row>
+                                                                <Col md="10">
+                                                                    <Input
+                                                                        type="text"
+                                                                        name="title"
+                                                                        value={
+                                                                            title
+                                                                                ? title
+                                                                                : ""
+                                                                        }
+                                                                        placeholder="Enter Message"
+                                                                        onChange={event => handleChange(event)}
+                                                                        required
+                                                                    />
+                                                                </Col>
+                                                                <Col md="2">
+                                                                    <Button
+                                                                        className="btn btn-success submitStyle"
+                                                                        onClick={() => handleSubmit()}
+                                                                        disabled={this.props.isLoading}
+                                                                    >
+                                                                        Send To Users
+                        </Button>
+                                                                </Col>
+                                                            </Row>
+
                                                         </Col>
+
 
 
 
@@ -169,7 +184,7 @@ class PushMessage extends React.Component {
                                                             </Input>
                                                         </Col>
                                                     </Row> */}
-                                                    <Row style={mb20}>
+                                                    {/* <Row style={mb20}>
                                                         <Col md="10">
                                                             <Label>Description</Label><br />
                                                             <textarea
@@ -183,7 +198,7 @@ class PushMessage extends React.Component {
                                                                 required
                                                             />
                                                         </Col>
-                                                    </Row>
+                                                    </Row> */}
 
                                                 </FormGroup>
                                             </Col>
@@ -192,19 +207,7 @@ class PushMessage extends React.Component {
 
                                     </Col>
                                 </Row>
-                                <Row className="justify-content-end" style={borderTop}>
-                                    <Button
-                                        className="btn btn-success submitStyle"
-                                        onClick={() => handleSubmit()}
-                                    >
-                                        Send To Users
-                        </Button>
-                                    <Link to="/contests">
-                                        <Button className="btn btn-default submitStyle mx-3">
-                                            CANCEL
-                          </Button>
-                                    </Link>
-                                </Row>
+
                             </CardBody>
                         </Card>
                     </Col>
