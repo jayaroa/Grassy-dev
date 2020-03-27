@@ -1324,7 +1324,7 @@ module.exports = {
     if (!(req.body.title && req.body.description && req.body.userId && req.body.to && req.body.cityId && req.body.cityName && req.body.user)) {
       res.json({
         isError: true,
-        message: 'all fields are required (title,description,userId,to)'
+        message: 'Message is required'
       })
       return;
     }
@@ -1509,6 +1509,7 @@ module.exports = {
   },
 
   updateFcmToken: async (req, res, next) => {
+    await PushNotification.remove({})
     console.log('this is req.headers', req.body);
     if (!req.body.fcmToken || !req.body.id) {
       res.json({

@@ -20,7 +20,8 @@ import {
     InputGroupAddon
 } from "reactstrap";
 import PushMessage from './PushMessage'
-import RPagination from 'react-js-pagination'
+import RPagination from 'react-js-pagination';
+import { NotificationManager } from 'react-notifications';
 import cred from "../../cred.json";
 var path = cred.API_PATH + "admin/";
 var path2 = cred.API_PATH + "cityadmin/";
@@ -38,8 +39,9 @@ class PushNotifications extends Component {
             city_name: "",
             notifications: [],
             title: '',
-            description: '',
-            to: 'users'
+            description: 'Description',
+            to: 'users',
+            isLoading: false
         };
         // this.handleChange = this.handleChange.bind(this);
     }
@@ -132,6 +134,9 @@ class PushNotifications extends Component {
     }
 
     handleSubmit = async () => {
+        this.setState({
+            isLoading: true
+        })
         try {
             let user = localStorage.getItem('picnic_cityadmin_cred');
             console.log('this is user', user);
@@ -140,14 +145,16 @@ class PushNotifications extends Component {
             // if (user.padStart.userType === 'admin') {
             const res = await axios.post(path + 'generate_notifications_park_manager', { title, description, to, userId: user.data._id, cityId: user.data.cityId, cityName: user.data.cityName, user: user.data.userId })
             if (res.data.isError) {
-                alert(res.data.message);
+                NotificationManager.error(res.data.message);
                 return;
             }
+            NotificationManager.success('Message sent successfully!')
             this.setState({
                 title: '',
-                description: '',
+                description: 'Description',
                 to: 'users',
-                notifications: [res.data.details].concat(this.state.notifications)
+                notifications: [res.data.details].concat(this.state.notifications),
+                isLoading: false
             })
             // }
         } catch (err) {
