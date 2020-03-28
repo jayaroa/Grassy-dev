@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("../models/user");
 const PushNotification = require("../models/pushnotifications");
+const Notification = require('../models/notification')
 const Park = require("../models/park");
 const Amenity = require("../models/amenity");
 const City = require("../models/city");
@@ -9,7 +10,8 @@ const Paviliondetails = require("../models/paviliondetails");
 const imageUpload = require("../../../services/ImageUploadBase64");
 const Mailercontroller = require("../../../services/mailer");
 const errorMsgJSON = require("../../../services/errors.json");
-const notificationService = require('../../../services/FirebaseOps')
+const notificationService = require('../../../services/FirebaseOps');
+
 
 module.exports = {
 
@@ -1318,7 +1320,7 @@ module.exports = {
     })
   },
 
-  generateNotificationsToAllCityManagers: async (req, res, next) => {
+  generateNotificationsToAllCityManagerUsers: async (req, res, next) => {
     let lang = req.headers.language ? req.headers.language : "EN";
     console.log('this is req.body', req.body)
     if (!(req.body.title && req.body.description && req.body.userId && req.body.to && req.body.cityId && req.body.cityName && req.body.user)) {
@@ -1374,55 +1376,58 @@ module.exports = {
       //   parkCity: cityName.toUpperCase()
       // }, { $addToSet: { "favouriteUser": req.body.user } });
       try {
-        const user = await User.findOne({ _id: req.body.userId })
+        const user = await User.findOne({ _id: req.body.userId });
+        console.log('this is the user', user)
         if (user && user.subscribedUsers && user.subscribedUsers.length) {
           await Promise.all(user.subscribedUsers.map(async (item) => {
             const foundUser = await User.findOne({ _id: item });
+            console.log('this is the found user in promise.all', foundUser)
+
             if (foundUser) {
               return notificationService(foundUser.fcmToken, foundUser.userId, req.body.title || 'Notification title', req.body.title, req.body.description, createdPushNotification._id, req.body.badgeCount)
             }
             return;
           }))
         }
-        const parks = await Park.aggregate([
-          {
-            $match: {
-              isRemoved: false,
-              parkCity: cityName.toUpperCase()
-            }
-          },
-          {
-            $project: {
-              _id: 0,
-              parkId: 1,
-              parkName: 1,
-              parkDefaultPic: 1,
-              parkRating: 1,
-              cityName: 1,
-              cityId: 1,
-              favouriteUser: 1
-            }
-          },
-          // {
-          //   $skip: itemToSkip
-          // },
-          // {
-          //   $limit: perPageItem
-          // }
-        ]);
-        console.log('this is the park', parks);
-        await Promise.all(parks.map(async (item) => {
-          let users = []
-          if (item.favouriteUser && item.favouriteUser.length) {
-            users = await User.find({ userId: { $in: item.favouriteUser } })
-          }
-          console.log('this is the users', users)
-          await Promise.all(users.filter(usr => usr.fcmToken).map(usr => {
-            console.log('this is usr._id', usr)
-            return notificationService(usr.fcmToken, usr.userId, req.body.title || 'Notification title', req.body.title, req.body.description, createdPushNotification._id, req.body.badgeCount)
-          }))
-          return users
-        }));
+        // const parks = await Park.aggregate([
+        //   {
+        //     $match: {
+        //       isRemoved: false,
+        //       parkCity: cityName.toUpperCase()
+        //     }
+        //   },
+        //   {
+        //     $project: {
+        //       _id: 0,
+        //       parkId: 1,
+        //       parkName: 1,
+        //       parkDefaultPic: 1,
+        //       parkRating: 1,
+        //       cityName: 1,
+        //       cityId: 1,
+        //       favouriteUser: 1
+        //     }
+        //   },
+        //   // {
+        //   //   $skip: itemToSkip
+        //   // },
+        //   // {
+        //   //   $limit: perPageItem
+        //   // }
+        // ]);
+        // console.log('this is the park', parks);
+        // await Promise.all(parks.map(async (item) => {
+        //   let users = []
+        //   if (item.favouriteUser && item.favouriteUser.length) {
+        //     users = await User.find({ userId: { $in: item.favouriteUser } })
+        //   }
+        //   console.log('this is the users', users)
+        //   await Promise.all(users.filter(usr => usr.fcmToken).map(usr => {
+        //     console.log('this is usr._id', usr)
+        //     return notificationService(usr.fcmToken, usr.userId, req.body.title || 'Notification title', req.body.title, req.body.description, createdPushNotification._id, req.body.badgeCount)
+        //   }))
+        //   return users
+        // }));
         res.json({
           isError: false,
           message: errorMsgJSON[lang]["200"],
@@ -1431,6 +1436,7 @@ module.exports = {
         });
         return;
       } catch (err) {
+        console.log('thi si the error', err)
         res.json({
           isError: true,
           message: errorMsgJSON[lang]["404"],

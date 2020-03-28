@@ -31,7 +31,7 @@ router.post('/approve_park', adminCtrl.approvePark);
 router.post('/add_edit_park', adminCtrl.addEditPark);
 router.post('/remove_park', adminCtrl.removePark);
 
-router.post('/generate_notifications_park_manager', adminCtrl.generateNotificationsToAllCityManagers);
+router.post('/generate_notifications_park_manager', adminCtrl.generateNotificationsToAllCityManagerUsers);
 router.post('/get_push_notifications', adminCtrl.getAllPushNotifications);
 
 router.post('/update_fcm', adminCtrl.updateFcmToken);
