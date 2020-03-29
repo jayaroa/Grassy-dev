@@ -4,6 +4,7 @@ const User = require("../models/user");
 const Park = require("../models/park");
 const Contest = require("../models/contest");
 const city = require("../models/city");
+const Notification = require('../models/notification')
 
 const Amenity = require("../models/amenity");
 
@@ -329,6 +330,36 @@ module.exports = {
       });
     }
 
+  },
+
+  getUserNotifications: async (req, res, next) => {
+    if (!req.body.userId) {
+      res.json({
+        isError: true,
+        message: 'userId of user is required'
+      })
+      return;
+    }
+    const notifications = await Notification.find({ userId: req.body.userId });
+    res.json({
+      isError: false,
+      data: notifications
+    })
+  },
+
+  updateUserNotificationStatus: async (req, res, next) => {
+    if (!req.body.notificationId) {
+      res.json({
+        isError: true,
+        message: 'notificationId is required'
+      })
+      return;
+    }
+    await Notification.update({ _id: req.body.notificationId }, { $set: { viewed: true } })
+    res.json({
+      isError: false,
+      message: 'updated successfully'
+    })
   },
 
 
@@ -674,7 +705,7 @@ module.exports = {
     if (!req.body.userId || !req.body.cityId) {
       res.json({
         isError: true,
-        message: 'userid and cityid are required'
+        message: 'userId and cityId are required'
       })
       return;
     }

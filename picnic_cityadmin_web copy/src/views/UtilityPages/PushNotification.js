@@ -159,6 +159,9 @@ class PushNotifications extends Component {
             // }
         } catch (err) {
             console.log('this is the error', err)
+            this.setState({
+                isLoading: false
+            })
             alert('error comes in sending notification')
         }
 
