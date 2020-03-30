@@ -16,15 +16,15 @@ export default {
       icon: 'icon-list'
     },
     {
-      name: 'Check-in Contests',
+      name: 'Contests',
       url: '/contests',
       icon: 'icon-people'
     },
-    {
-      name: 'Picture Contests',
-      url: '/pictureContests',
-      icon: 'icon-people'
-    },
+    // {
+    //   name: 'Picture Contests',
+    //   url: '/pictureContests',
+    //   icon: 'icon-people'
+    // },
 
     {
       name: 'Push Notifications',
