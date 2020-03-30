@@ -20,7 +20,7 @@ import {
     InputGroupAddon
 } from "reactstrap";
 import PushMessage from './PushMessage'
-import RPagination from 'react-js-pagination';
+// import RPagination from 'react-js-pagination';
 import { NotificationManager } from 'react-notifications';
 import cred from "../../cred.json";
 var path = cred.API_PATH + "admin/";
