@@ -21,7 +21,7 @@ import {
 } from "reactstrap";
 import PushMessage from './PushMessage'
 // import RPagination from 'react-js-pagination';
-import { NotificationManager } from 'react-notifications';
+import { NotificationManager, NotificationContainer } from 'react-notifications';
 import cred from "../../cred.json";
 var path = cred.API_PATH + "admin/";
 var path2 = cred.API_PATH + "cityadmin/";
@@ -271,6 +271,7 @@ class PushNotifications extends Component {
                         </Card>
                     </Col>
                 </Row>
+                <NotificationContainer />
             </div>
         );
     }
