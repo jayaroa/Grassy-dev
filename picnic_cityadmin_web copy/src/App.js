@@ -5,7 +5,7 @@ import 'react-notifications/lib/notifications.css';
 import './App.scss';
 import './Custom.scss';
 import withAuthentication from './Session/WithAuthentication';
-import { messaging } from './init-fcm';
+// import { messaging } from './init-fcm';
 import axios from 'axios';
 import cred from './cred.json'
 // import { ToastDemo } from './ToastManager';
@@ -47,45 +47,45 @@ class App extends Component {
     let user = localStorage.getItem('picnic_cityadmin_cred');
     console.log('this is user', user);
     user = typeof user === 'string' ? JSON.parse(user) : user;
-    messaging.requestPermission()
-      .then(async function () {
-        const token = await messaging.getToken();
-        console.log('this is registration token', token)
-        await axios.post(path + 'update_fcm', {
-          fcmToken: token,
-          id: user.data._id
-        })
-        messaging.onTokenRefresh(async () => {
-          messaging.getToken().then(async (refreshedToken) => {
-            console.log('Token refreshed.');
-            // Indicate that the new Instance ID token has not yet been sent to the
-            // app server.
+    // messaging.requestPermission()
+    //   .then(async function () {
+    //     const token = await messaging.getToken();
+    //     console.log('this is registration token', token)
+    //     await axios.post(path + 'update_fcm', {
+    //       fcmToken: token,
+    //       id: user.data._id
+    //     })
+    //     messaging.onTokenRefresh(async () => {
+    //       messaging.getToken().then(async (refreshedToken) => {
+    //         console.log('Token refreshed.');
+    //         // Indicate that the new Instance ID token has not yet been sent to the
+    //         // app server.
 
 
-            await axios.post(path + 'update_fcm', {
-              fcmToken: refreshedToken,
-              id: user.data._id
-            })
-            // ...
-          }).catch((err) => {
-            console.log('Unable to retrieve refreshed token ', err);
-            // showToken('Unable to retrieve refreshed token ', err);
-          });
-        });
-      })
-      .catch(function (err) {
-        console.log("Unable to get permission to notify.", err);
-      });
-    navigator.serviceWorker.addEventListener("message", (message) => {
-      console.log('this is message', message)
-      message.data && NotificationManager.info(message.data['firebase-messaging-msg-data'].notification.title, 'Grassy App')
-      this.setState({
-        message
-      })
-      // const { addToast } = useToasts()
-      // addToast('you received update Successfully', { appearance: 'success' })
-      console.log('this is message', message)
-    });
+    //         await axios.post(path + 'update_fcm', {
+    //           fcmToken: refreshedToken,
+    //           id: user.data._id
+    //         })
+    //         // ...
+    //       }).catch((err) => {
+    //         console.log('Unable to retrieve refreshed token ', err);
+    //         // showToken('Unable to retrieve refreshed token ', err);
+    //       });
+    //     });
+    //   })
+    //   .catch(function (err) {
+    //     console.log("Unable to get permission to notify.", err);
+    //   });
+    // navigator.serviceWorker.addEventListener("message", (message) => {
+    //   console.log('this is message', message)
+    //   message.data && NotificationManager.info(message.data['firebase-messaging-msg-data'].notification.title, 'Grassy App')
+    //   this.setState({
+    //     message
+    //   })
+    //   // const { addToast } = useToasts()
+    //   // addToast('you received update Successfully', { appearance: 'success' })
+    //   console.log('this is message', message)
+    // });
     var admincred = localStorage.getItem("picnic_cityadmin_cred");
     if (localStorage.getItem("picnic_cityadmin_cred")) {
       console.log("inside if2", admincred);
@@ -104,7 +104,7 @@ class App extends Component {
     console.log('this is this.state', this.state)
     console.log('this is notification title ', this.state.message.data && this.state.message.data['firebase-messaging-msg-data'].notification.title)
     return (
-      <BrowserRouter>
+      <HashRouter>
         <React.Suspense fallback={loading()}>
           <React.Fragment>
             {this.state.message.data ? <NotificationContainer />
@@ -121,7 +121,7 @@ class App extends Component {
             </Switch>
           </React.Fragment>
         </React.Suspense>
-      </BrowserRouter>
+      </HashRouter>
     );
   }
 }
