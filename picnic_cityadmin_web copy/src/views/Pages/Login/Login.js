@@ -49,12 +49,24 @@ class Login extends Component {
   }
 
   calculatedate(profilecreatedate) {
-    let previous_date = new Date(profilecreatedate);
-    var prev_date_format = previous_date.getFullYear() + '-' + (previous_date.getMonth() + 1) + '-' + previous_date.getDate()
-    var currentdate = (new Date()).toISOString().split('T')[0];
-    const diffTime = Math.abs(new Date(currentdate) - new Date(prev_date_format));
+    console.log('this is profilecreateddate', profilecreatedate);
+    const previous_date = new Date(profilecreatedate);
+    console.log('prevous_date', previous_date);
+    // var prev_date_format = previous_date.getFullYear() + '-' + ((previous_date.getMonth() + 1) > 9 ? (previous_date.getMonth() + 1) : '0' + (previous_date.getMonth() + 1)) + '-' + (previous_date.getDate() > 9 ? previous_date.getDate() : '0' + previous_date.getDate());
+    let prev_date_format = previous_date.getFullYear() + '-' + (previous_date.getMonth() + 1) + '-' + previous_date.getDate();
+    console.log('prev_date_format', prev_date_format)
+    let currentdate = (new Date()).toISOString().split('T')[0];
+    console.log('currentdate', currentdate)
+    const cur = new Date(currentdate);
+    const prev = new Date(prev_date_format)
+    const diffTime = Math.abs(cur - prev);
+    console.log('diffTime', diffTime, cur, prev)
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    console.log('this is the dirrDays in calcuated date', diffDays)
     return diffDays;
+    // var prev_date_format = previous_date.getFullYear() + '-' + ((previous_date.getMonth() + 1) > 9 ? (previous_date.getMonth() + 1) : '0' + (previous_date.getMonth() + 1)) + '-' + (previous_date.getDate() > 9 ? previous_date.getDate() : '0' + previous_date.getDate());
+    // let previous_date = (new Date(profilecreatedate)).toISOString().split('T')[0];
+
   }
 
   async componentDidMount() {
@@ -71,7 +83,8 @@ class Login extends Component {
 
         if (diffDays != '') {
           if (proFlag == 0) {
-            if (diffDays < cred.FREETRIAL) {
+            // if (true) {
+            if (typeof diffDays === "number" || (diffDays < cred.FREETRIAL)) {
               localStorage.setItem("proFlag", proFlag);
               that.props.history.push("/package");
             } else {
@@ -164,13 +177,15 @@ class Login extends Component {
           /*code by sheeza*/
           var responseResult = res['details'];
           if (responseResult.data != '') {
+            console.log('this is responseresule.data.result', responseResult.data)
             var proFlag = responseResult.data.proFlag;
             /*conditional check for free trial days*/
             var profilecreatedate = responseResult.data.profileCreatedAt;
             var diffDays = this.calculatedate(profilecreatedate);
             if (diffDays != '') {
               if (proFlag == 0) {
-                if (diffDays < cred.FREETRIAL) {
+                // if (true) {
+                if (typeof diffDays === "number" || diffDays < cred.FREETRIAL) {
                   localStorage.setItem("proFlag", proFlag);
                   that.props.history.push("/package");
                 } else {
