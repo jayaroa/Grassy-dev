@@ -4,7 +4,9 @@ import axios from "axios";
 // import { withToastManager } from 'react-toast-notifications';
 import { Alert } from "reactstrap";
 import cred from "../../../cred.json";
-import logo from '../../../assets/img/brand/grassy_logo.png'
+// import { messaging } from '../../../init-fcm'
+import logo from '../../../assets/img/brand/grassy_logo.png';
+import { NotificationManager } from 'react-notifications'
 
 import {
   Button,
@@ -47,12 +49,24 @@ class Login extends Component {
   }
 
   calculatedate(profilecreatedate) {
-    let previous_date = new Date(profilecreatedate);
-    var prev_date_format = previous_date.getFullYear()+'-' + (previous_date.getMonth()+1) + '-'+previous_date.getDate()
-    var currentdate = (new Date()).toISOString().split('T')[0];
-    const diffTime = Math.abs(new Date(currentdate) - new Date(prev_date_format));
+    console.log('this is profilecreateddate', profilecreatedate);
+    const previous_date = new Date(profilecreatedate);
+    console.log('prevous_date', previous_date);
+    // var prev_date_format = previous_date.getFullYear() + '-' + ((previous_date.getMonth() + 1) > 9 ? (previous_date.getMonth() + 1) : '0' + (previous_date.getMonth() + 1)) + '-' + (previous_date.getDate() > 9 ? previous_date.getDate() : '0' + previous_date.getDate());
+    let prev_date_format = previous_date.getFullYear() + '-' + (previous_date.getMonth() + 1) + '-' + previous_date.getDate();
+    console.log('prev_date_format', prev_date_format)
+    let currentdate = (new Date()).toISOString().split('T')[0];
+    console.log('currentdate', currentdate)
+    const cur = new Date(currentdate);
+    const prev = new Date(prev_date_format)
+    const diffTime = Math.abs(cur - prev);
+    console.log('diffTime', diffTime, cur, prev)
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    console.log('this is the dirrDays in calcuated date', diffDays)
     return diffDays;
+    // var prev_date_format = previous_date.getFullYear() + '-' + ((previous_date.getMonth() + 1) > 9 ? (previous_date.getMonth() + 1) : '0' + (previous_date.getMonth() + 1)) + '-' + (previous_date.getDate() > 9 ? previous_date.getDate() : '0' + previous_date.getDate());
+    // let previous_date = (new Date(profilecreatedate)).toISOString().split('T')[0];
+
   }
 
   async componentDidMount() {
@@ -61,32 +75,33 @@ class Login extends Component {
       let that = this;
       var responseResult = JSON.parse(storage);
       /*code by sheeza*/
-      if(responseResult.data != '') {
-          var proFlag = responseResult.data.proFlag;
-          /*conditional check for free trial days*/
-          var profilecreatedate = responseResult.data.profileCreatedAt;
-          var diffDays = that.calculatedate(profilecreatedate);
+      if (responseResult.data != '') {
+        var proFlag = responseResult.data.proFlag;
+        /*conditional check for free trial days*/
+        var profilecreatedate = responseResult.data.profileCreatedAt;
+        var diffDays = that.calculatedate(profilecreatedate);
 
-          if(diffDays != '') {
-            if( proFlag == 0) {
-              if(diffDays < cred.FREETRIAL) {
-                localStorage.setItem("proFlag", proFlag);
-                that.props.history.push("/package");
-              } else {
-                alert('Your Free trial is exceeded');
-                localStorage.setItem("proFlag", 2);
-                that.props.history.push("/package");
-              }
-            } else {
+        if (diffDays != '') {
+          if (proFlag == 0) {
+            // if (true) {
+            if (typeof diffDays === "number" || (diffDays < cred.FREETRIAL)) {
               localStorage.setItem("proFlag", proFlag);
-              that.props.history.push("/dashboard");
+              that.props.history.push("/package");
+            } else {
+              alert('Your Free trial is exceeded');
+              localStorage.setItem("proFlag", 2);
+              that.props.history.push("/package");
             }
           } else {
-            this.setState({
-              isAuthenticated: false,
-              authMessage: "Error in getting the date Please try after some time"
-            });
+            localStorage.setItem("proFlag", proFlag);
+            that.props.history.push("/dashboard");
           }
+        } else {
+          this.setState({
+            isAuthenticated: false,
+            authMessage: "Error in getting the date Please try after some time"
+          });
+        }
       }
     }
   }
@@ -116,33 +131,78 @@ class Login extends Component {
         const res = serverResponse.data;
         if (!res.isError) {
           localStorage.setItem("picnic_cityadmin_cred", JSON.stringify(res['details']));
+          // let user = localStorage.getItem('picnic_cityadmin_cred');
+          // console.log('this is user', user);
+          // user = typeof user === 'string' ? JSON.parse(user) : user;
+          // messaging.requestPermission()
+          //   .then(async function () {
+          //     const token = await messaging.getToken();
+          //     console.log('this is registration token', token);
+          //     const adminPath = cred.API_PATH + '/admin/'
+          //     await axios.post(adminPath + 'update_fcm', {
+          //       fcmToken: token,
+          //       id: user.data._id
+          //     })
+          //     messaging.onTokenRefresh(async () => {
+          //       messaging.getToken().then(async (refreshedToken) => {
+          //         console.log('Token refreshed.');
+          //         // Indicate that the new Instance ID token has not yet been sent to the
+          //         // app server.
+
+
+          //         await axios.post(adminPath + 'update_fcm', {
+          //           fcmToken: refreshedToken,
+          //           id: user.data._id
+          //         })
+          //         // ...
+          //       }).catch((err) => {
+          //         console.log('Unable to retrieve refreshed token ', err);
+          //         // showToken('Unable to retrieve refreshed token ', err);
+          //       });
+          //     });
+          //   })
+          //   .catch(function (err) {
+          //     console.log("Unable to get permission to notify.", err);
+          //   });
+          // navigator.serviceWorker.addEventListener("message", (message) => {
+          //   console.log('this is message', message)
+          //   message.data && NotificationManager.info(message.data['firebase-messaging-msg-data'].notification.title, 'Grassy App')
+          //   this.setState({
+          //     message
+          //   })
+          //   // const { addToast } = useToasts()
+          //   // addToast('you received update Successfully', { appearance: 'success' })
+          //   console.log('this is message', message)
+          // });
           /*code by sheeza*/
           var responseResult = res['details'];
-          if(responseResult.data != '') {
-              var proFlag = responseResult.data.proFlag;
-              /*conditional check for free trial days*/
-              var profilecreatedate = responseResult.data.profileCreatedAt;
-              var diffDays = this.calculatedate(profilecreatedate);
-              if(diffDays != '') {
-                if( proFlag == 0) {
-                  if(diffDays < cred.FREETRIAL) {
-                    localStorage.setItem("proFlag", proFlag);
-                    that.props.history.push("/package");
-                  } else {
-                    alert('Your Free trial is exceeded');
-                    localStorage.setItem("proFlag", 2);
-                    that.props.history.push("/package");
-                  }
-                } else {
+          if (responseResult.data != '') {
+            console.log('this is responseresule.data.result', responseResult.data)
+            var proFlag = responseResult.data.proFlag;
+            /*conditional check for free trial days*/
+            var profilecreatedate = responseResult.data.profileCreatedAt;
+            var diffDays = this.calculatedate(profilecreatedate);
+            if (diffDays != '') {
+              if (proFlag == 0) {
+                // if (true) {
+                if (typeof diffDays === "number" || diffDays < cred.FREETRIAL) {
                   localStorage.setItem("proFlag", proFlag);
-                  that.props.history.push("/dashboard");
+                  that.props.history.push("/package");
+                } else {
+                  alert('Your Free trial is exceeded');
+                  localStorage.setItem("proFlag", 2);
+                  that.props.history.push("/package");
                 }
               } else {
-                this.setState({
-                  isAuthenticated: false,
-                  authMessage: "Error in getting the date Please try after some time"
-                });
+                localStorage.setItem("proFlag", proFlag);
+                that.props.history.push("/dashboard");
               }
+            } else {
+              this.setState({
+                isAuthenticated: false,
+                authMessage: "Error in getting the date Please try after some time"
+              });
+            }
           } else {
             this.setState({
               isAuthenticated: false,
@@ -228,18 +288,18 @@ class Login extends Component {
                         </Col>
                       </Row>
                       <Row>
-                      <Col xs="12">
-                      <Link to="/register">
-                        <Button
-                          color="success"
-                          className="mt-3"
-                          active
-                          tabIndex={-1}
-                        >
-                           Register Now
+                        <Col xs="12">
+                          <Link to="/register">
+                            <Button
+                              color="success"
+                              className="mt-3"
+                              active
+                              tabIndex={-1}
+                            >
+                              Register Now
                         </Button>
-                      </Link>
-                      </Col>
+                          </Link>
+                        </Col>
                       </Row>
                     </div>
                   </CardBody>
@@ -249,8 +309,8 @@ class Login extends Component {
                   style={{ width: "44%" }}
                 >
                   <CardBody className="text-center">
-                    <div style={{"marginTop":'45px'}}>
-                    <img src={logo} width="300px" />
+                    <div style={{ "marginTop": '45px' }}>
+                      <img src={logo} width="300px" />
 
                     </div>
                   </CardBody>
