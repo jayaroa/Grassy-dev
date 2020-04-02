@@ -232,7 +232,7 @@ class Contests extends Component {
             </div>
           </TabPane>
           <TabPane tabId="2">
-            <PictureContests />
+            <PictureContests {...this.props} />
           </TabPane>
         </TabContent>
 
