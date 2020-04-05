@@ -36,4 +36,6 @@ router.post('/get_push_notifications', adminCtrl.getAllPushNotifications);
 
 router.post('/update_fcm', adminCtrl.updateFcmToken);
 
+router.post('/dashboard_data', adminCtrl.getDashboardData)
+
 module.exports = router;
