@@ -402,7 +402,7 @@ class Dashboard extends Component {
             <Form>
               <FormGroup>
                 <Label for="parks">Parks</Label>
-                <Input value={this.state.selectedPark} type="select" name="selectedPark" id="parks" onChange={this.handleChange}>
+                <Input value={JSON.stringify({ parkId: this.state.selectedPark, parkLatestReviews: this.state.parkLatestReviews })} type="select" name="selectedPark" id="parks" onChange={this.handleChange}>
                   <option value="">Select Park</option>
                   {
                     this.state.allParks.map((item => {
@@ -461,7 +461,7 @@ class Dashboard extends Component {
           <Col xs="12" sm="12" lg="12">
             <Card className="text-white bg-warning">
               <CardBody className="pb-0">
-                <div className="text-value">{this.state.parkLatestReviews.length}</div>
+                <div className="text-value">{this.state.parkLatestReviews ? this.state.parkLatestReviews.length : 0}</div>
                 <div>Checkins</div>
               </CardBody>
               <div className="chart-wrapper" style={{ height: "70px" }}>
