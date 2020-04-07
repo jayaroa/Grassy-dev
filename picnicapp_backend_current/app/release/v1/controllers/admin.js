@@ -11,6 +11,7 @@ const imageUpload = require("../../../services/ImageUploadBase64");
 const Mailercontroller = require("../../../services/mailer");
 const errorMsgJSON = require("../../../services/errors.json");
 const notificationService = require('../../../services/FirebaseOps');
+const Review = require('../models/review');
 
 
 module.exports = {
@@ -1549,10 +1550,18 @@ module.exports = {
 
 
 
-  getDashboardData: (req, res, next) => {
-    // No of parks
-    // No of cities/cityadmins
-    // No of users
-    //
+  getDashboardData: async (req, res, next) => {
+    if (!req.body.userId) {
+      res.json({
+        isError: true,
+        message: 'userId is required'
+      });
+      return;
+    }
+    const data = await Review.find();
+    res.json({
+      isError: false,
+      data
+    })
   }
 };
