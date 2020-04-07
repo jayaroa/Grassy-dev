@@ -184,8 +184,10 @@ class Dashboard extends Component {
   }
 
   async getReviews(park_id) {
+    const parkId = this.state.selectedPark ? JSON.parse(this.state.selectedPark).parkId : ''
+
     const serverResponse = await axios.post(path2 + '/get_park_reviews', {
-      park_id,
+      park_id: parkId,
       start_date: this.state.start_date,
       end_date: this.state.end_date
     })
@@ -198,7 +200,7 @@ class Dashboard extends Component {
   handleChange = (e, parkLatestReviews) => {
     const that = this;
     this.setState({
-      [e.target.name]: JSON.parse(e.target.value).parkId,
+      [e.target.name]: e.target.value,
       parkLatestReviews: JSON.parse(e.target.value).parkLatestReviews
     }, async () => {
       await that.getReviews(this.state.selectedPark)
@@ -262,15 +264,24 @@ class Dashboard extends Component {
   }
 
   render() {
-    const reviewLabels = this.state.reviews.length ? this.state.reviews.map(item => new Date(item.createdAt).toLocaleDateString()) : []
+    const reviewsChartCarData = this.state.reviews.length ? this.state.reviews.reduce((acc, value) => {
+      acc[new Date(value.createdAt).toLocaleDateString()] = acc[new Date(value.createdAt).toLocaleDateString()] ? acc[new Date(value.createdAt).toLocaleDateString()] + value.cars : value.cars
+      return acc
+    }, {}) : {};
+    const reviewsChartPeopleData = this.state.reviews.length ? this.state.reviews.reduce((acc, value) => {
+      acc[new Date(value.createdAt).toLocaleDateString()] = acc[new Date(value.createdAt).toLocaleDateString()] ? acc[new Date(value.createdAt).toLocaleDateString()] + value.people : value.people
+      return acc
+    }, {}) : {};
+    console.log('this is the reviewsChartCarData', reviewsChartCarData)
+    // const reviewLabels = this.state.reviews.length ? this.state.reviews.map(item => new Date(item.createdAt).toLocaleDateString()) : []
     const cardChartData1 = {
-      labels: reviewLabels,
+      labels: Object.keys(reviewsChartCarData),
       datasets: [
         {
           label: "Cars",
           backgroundColor: brandPrimary,
           borderColor: "rgba(255,255,255,.55)",
-          data: this.state.reviews.length ? this.state.reviews.map(item => item.cars) : []
+          data: Object.values(reviewsChartCarData)
         }
       ]
     };
@@ -320,13 +331,13 @@ class Dashboard extends Component {
       }
     };
     const cardChartData2 = {
-      labels: reviewLabels,
+      labels: Object.keys(reviewsChartPeopleData),
       datasets: [
         {
           label: "people",
           backgroundColor: brandPrimary,
           borderColor: "rgba(255,255,255,.55)",
-          data: this.state.reviews.length ? this.state.reviews.map(item => item.people) : []
+          data: Object.values(reviewsChartPeopleData)
         }
       ]
     };
@@ -402,7 +413,7 @@ class Dashboard extends Component {
             <Form>
               <FormGroup>
                 <Label for="parks">Parks</Label>
-                <Input value={JSON.stringify({ parkId: this.state.selectedPark, parkLatestReviews: this.state.parkLatestReviews })} type="select" name="selectedPark" id="parks" onChange={this.handleChange}>
+                <Input value={this.state.selectedPark} type="select" name="selectedPark" id="parks" onChange={this.handleChange}>
                   <option value="">Select Park</option>
                   {
                     this.state.allParks.map((item => {
