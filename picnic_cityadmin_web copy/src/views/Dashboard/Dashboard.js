@@ -175,7 +175,10 @@ class Dashboard extends Component {
         }, async () => {
           if (that.state.selectedPark) {
             const selectedPark = JSON.parse(that.state.selectedPark).parkId
-            await that.getReviews(selectedPark)
+            const reviews = await that.getReviews(selectedPark);
+            that.setState({
+              start_date: reviews.length ? new Date(reviews[0].createdAt) : new Date()
+            })
           }
         })
       });
@@ -195,6 +198,7 @@ class Dashboard extends Component {
     this.setState({
       reviews: serverResponse.data.reviews ? serverResponse.data.reviews : []
     })
+    return serverResponse.data.reviews ? serverResponse.data.reviews : []
   }
 
   handleChange = (e, parkLatestReviews) => {
@@ -462,7 +466,7 @@ class Dashboard extends Component {
                 <Line
                   data={cardChartData2}
                   options={cardChartOpts2}
-                  height={100}
+                  height={70}
                 />
               </div>
             </Card>
