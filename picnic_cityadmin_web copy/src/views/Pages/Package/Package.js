@@ -157,7 +157,7 @@ class Package extends Component {
                                             this.handleSubmit('free');
                                           }}
                                         >
-                                          Proceed to Payment
+                                          Select Free Package
                               </Button>
                                       </CardBody>
                                     </Card>
